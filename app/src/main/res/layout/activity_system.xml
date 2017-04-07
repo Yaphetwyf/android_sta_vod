@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+ <include layout="@layout/title_bar_1"/>
+<RelativeLayout
+    android:gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+ <LinearLayout
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:layout_gravity="center"
+     android:background="@drawable/gray_conner"
+     android:orientation="vertical">
+  <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginLeft="30dp"
+      android:orientation="horizontal">
+   <ImageView
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:src="@mipmap/user"/>
+   <EditText
+       android:id="@+id/et_username"
+       android:layout_marginLeft="30dp"
+       android:layout_width="300dp"
+       android:singleLine="true"
+       android:layout_height="wrap_content"/>
+  </LinearLayout>
+  <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginLeft="30dp"
+      android:orientation="horizontal">
+   <ImageView
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:src="@mipmap/password"/>
+   <EditText
+       android:id="@+id/et_password"
+       android:layout_marginLeft="30dp"
+       android:layout_width="300dp"
+       android:singleLine="true"
+       android:inputType="textPassword"
+       android:layout_height="wrap_content"/>
+  </LinearLayout>
+  <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginLeft="30dp"
+      android:orientation="horizontal">
+   <ImageView
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:src="@mipmap/address"/>
+   <EditText
+       android:id="@+id/et_servers_address"
+       android:layout_marginLeft="30dp"
+       android:layout_width="300dp"
+       android:singleLine="true"
+       android:layout_height="wrap_content"/>
+  </LinearLayout>
+  <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+   <Button
+       android:id="@+id/btn_login"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="登入"/>
+   <Button
+       android:id="@+id/btn_cancel"
+       android:text="注销"
+       android:layout_centerHorizontal="true"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"/>
+   <Button
+       android:id="@+id/btn_exit"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_alignParentRight="true"
+       android:text="退出"/>
+  </RelativeLayout>
+
+ </LinearLayout>
+
+</RelativeLayout>
+
+</LinearLayout>
