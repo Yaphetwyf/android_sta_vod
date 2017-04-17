@@ -100,6 +100,7 @@
     <string name="Saturday">星期六</string>
     <string name="Sunday">星期七</string>
     <string name="add">添加</string>
+    <string name="error">该播放器不支持这种音频文件类型</string>
     <string name="move_up">上移</string>
     <string name="move_down">下移</string>
     <string name="audition">试听</string>

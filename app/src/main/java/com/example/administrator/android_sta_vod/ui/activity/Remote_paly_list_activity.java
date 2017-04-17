@@ -20,6 +20,7 @@ import com.example.administrator.android_sta_vod.adapter.Remote_play_list_adapte
 import com.example.administrator.android_sta_vod.bean.Mp3;
 import com.example.administrator.android_sta_vod.utils.File_utils;
 import com.example.administrator.android_sta_vod.utils.SPUtils;
+import com.example.administrator.android_sta_vod.utils.T;
 import com.example.administrator.android_sta_vod.utils.Ui_utils;
 import com.example.administrator.android_sta_vod.utils.Utils;
 
@@ -50,6 +51,7 @@ public class Remote_paly_list_activity extends Base_activity {
     private Button remote_next;
     private Button remote_toggle_play;
     private Button remote_switch_play_mode;
+    private String SD_PATH;
     /**
      * 打开是否是同一首音频
      * true： 不会从头开始播放
@@ -85,6 +87,7 @@ public class Remote_paly_list_activity extends Base_activity {
         mediaPlayer = new MediaPlayer();
 
         mediaPlayer.setOnCompletionListener(new CompletionListener());
+        SD_PATH  = Environment.getExternalStorageDirectory() + "/";
         music_load= Environment.getExternalStorageDirectory() + "/"+"sdMusic"+"/";
         songArrayList = new ArrayList<String>();
         file_utils = new File_utils();
@@ -105,7 +108,7 @@ public class Remote_paly_list_activity extends Base_activity {
                 songIndex=position;
                 remote_toggle_play.setBackgroundResource(R.drawable.btn_audio_pause);
                  songplay();
-
+                updateCurrentPosition();
             }
         });
         // 用户滑动seekbar, 则实现快进快退功能
@@ -137,6 +140,9 @@ public class Remote_paly_list_activity extends Base_activity {
 
         }
     }
+    private void updtaeUI(){
+
+    }
     private Random mRandom = new Random();
     private void next_song() {
         switch (mCurrentPlayMode) {
@@ -153,7 +159,7 @@ public class Remote_paly_list_activity extends Base_activity {
                 break;
         }
       songplay();
-
+        updateCurrentPosition();
     }
     private void prev_song() {
         switch (mCurrentPlayMode) {
@@ -170,7 +176,7 @@ public class Remote_paly_list_activity extends Base_activity {
                 break;
         }
         songplay();
-
+        updateCurrentPosition();
     }
     private void download(String path) {
         new Thread(new Runnable() {
@@ -184,6 +190,7 @@ public class Remote_paly_list_activity extends Base_activity {
     @Override
     public void init_data() {
         String load = SPUtils.getString(Ui_utils.get_context(), download);
+        createSDDir("sdMusic");
         Log.d("load",load);
         String path3="";
         Intent intent = getIntent();
@@ -209,6 +216,9 @@ public class Remote_paly_list_activity extends Base_activity {
         // 音乐列表
         List<String> picList = new ArrayList<String>();
         File mfile = new File(music_load);
+
+
+
         File[] files = mfile.listFiles();
         // 将所有的文件存入ArrayList中,并过滤所有图片格式的文件
         for (int i = 0; i < files.length; i++) {
@@ -217,6 +227,11 @@ public class Remote_paly_list_activity extends Base_activity {
         }
         // 返回得到的音乐列表
         return picList;
+    }
+    public File createSDDir(String dirName){
+        File dir = new File(SD_PATH + dirName);
+        dir.mkdir();
+        return dir;
     }
     @Override
     public void onClick(View v, int btnId) {
@@ -300,7 +315,7 @@ public class Remote_paly_list_activity extends Base_activity {
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-     
+            T.show_short(Ui_utils.get_string(R.string.error));
         }
     }
     private void release() {
