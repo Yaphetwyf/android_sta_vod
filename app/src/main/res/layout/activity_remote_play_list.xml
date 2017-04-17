@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <include layout="@layout/title_bar"/>
+<ListView
+    android:id="@+id/lv_remote_play_list"
+    android:layout_width="match_parent"
+    android:layout_weight="1"
+    android:layout_height="0dp">
+
+</ListView>
+    <TextView
+        android:id="@+id/tv_remote_current_position"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:text="00:00/00:00"
+        android:textColor="@color/tv_time_green"
+        android:textSize="14sp" />
+    <SeekBar
+        android:id="@+id/sb_remote_current_position"
+        style="@android:style/Widget.SeekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="0"
+        android:maxHeight="3dp"
+        android:minHeight="3dp"
+        android:progress="0"
+        android:progressDrawable="@drawable/audio_progress_drawable"
+        android:thumb="@drawable/seekbar_audio_thumb"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <include layout="@layout/place_holder" />
+
+        <Button
+            android:id="@+id/btn_remote_switch_play_mode"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:background="@drawable/btn_playmode_allrepeat" />
+
+        <include layout="@layout/place_holder" />
+
+        <Button
+            android:id="@+id/btn_remote_prev"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:background="@drawable/btn_audio_prev" />
+
+        <include layout="@layout/place_holder" />
+
+        <Button
+            android:id="@+id/btn_remote_toggle_play"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:background="@drawable/btn_audio_pause" />
+
+        <include layout="@layout/place_holder" />
+
+        <Button
+            android:id="@+id/btn_remote_next"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:background="@drawable/btn_audio_next" />
+
+        <include layout="@layout/place_holder" />
+
+    </LinearLayout>
+</LinearLayout>

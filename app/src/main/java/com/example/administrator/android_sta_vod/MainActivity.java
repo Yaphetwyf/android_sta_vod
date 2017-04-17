@@ -14,7 +14,6 @@ import android.widget.LinearLayout;
 
 import com.broadcast.android.android_sta_jni.ndk_wrapper;
 import com.example.administrator.android_sta_vod.app.My_application;
-import com.example.administrator.android_sta_vod.base.Global;
 import com.example.administrator.android_sta_vod.bean.User;
 import com.example.administrator.android_sta_vod.bean.Users;
 import com.example.administrator.android_sta_vod.event.Avsz_info_event;
@@ -28,7 +27,6 @@ import com.example.administrator.android_sta_vod.ui.activity.User_talk_activity;
 import com.example.administrator.android_sta_vod.ui.activity.dialogs.Dialog_answer;
 import com.example.administrator.android_sta_vod.ui.activity.dialogs.Dialog_calluser;
 import com.example.administrator.android_sta_vod.ui.activity.dialogs.Dialog_text_answer;
-import com.example.administrator.android_sta_vod.utils.Beacon_util;
 import com.example.administrator.android_sta_vod.utils.NetUtils;
 import com.example.administrator.android_sta_vod.utils.SPUtils;
 import com.example.administrator.android_sta_vod.utils.T;
@@ -107,6 +105,9 @@ public class MainActivity extends Base_activity {
                 T.show_short(Ui_utils.get_string(R.string.net_connect_failure));
                 fl_off_line.setVisibility(View.VISIBLE);
             }
+        }else{
+            T.show_short(Ui_utils.get_string(R.string.please_goto_login));
+            fl_off_line.setVisibility(View.VISIBLE);
         }
     }
 
@@ -225,8 +226,6 @@ public class MainActivity extends Base_activity {
         }
 
     }
-
-
     //显示回答的Dialog
     private void show_ansdialog(String type, String key, String value) {
         dialog_text_answer = new Dialog_text_answer(this);

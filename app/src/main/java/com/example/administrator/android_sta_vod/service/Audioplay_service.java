@@ -108,9 +108,7 @@ public class Audioplay_service extends Service implements I_audio_play {
             sendEventBus();
             return;
         }
-
         release();
-
         try {
             mMediaPlayer = new MediaPlayer();
             mMediaPlayer.setOnPreparedListener(mOnPreparedListener);
@@ -238,7 +236,6 @@ public class Audioplay_service extends Service implements I_audio_play {
                 position = mRandom.nextInt(audioDatas.size());
                 break;
         }
-
         openAudio();
         // 显示通知
         showCustomNotification();

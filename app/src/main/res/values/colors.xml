@@ -9,6 +9,8 @@
     <color name="black">#000</color>
     <color name="red">#f00</color>
     <color name="green">#0f0</color>
+    <color name="tv_time_green">#31C27C</color>
+
     <color name="blue">#00f</color>
     <color name="gray">#44000000</color>
     <color name="transparent">#00000000</color>
@@ -31,6 +33,8 @@
     <color name="tackback_bg">#A2BCD8</color>
     <color name="seekbar_audio_background">#ff9298A1</color>
     <color name="seekbar_audio_progress">#5CB292</color>
-
+    <color name="MediumSpringGreen">#00FA9A</color>
+    <color name="SpringGreen">#00FF7F</color>
+    <color name="LimeGreen">#32CD32</color>
 
 </resources>

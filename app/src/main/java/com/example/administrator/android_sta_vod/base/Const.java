@@ -26,5 +26,7 @@ public class Const {
     public static final String term_state = "TERM_STATE";
     //任务
     public static final String task = "TASK";
+    //下载路径
+    public static final String download = "DOWNLOAD";
 
 }

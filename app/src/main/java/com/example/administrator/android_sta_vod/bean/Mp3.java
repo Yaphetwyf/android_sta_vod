@@ -1,10 +1,13 @@
 package com.example.administrator.android_sta_vod.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by AVSZ on 2017/1/10.
  */
 
-public class Mp3 {
+public class Mp3 implements Parcelable{
     private String path;
     private String name;
     private String length;
@@ -17,6 +20,27 @@ public class Mp3 {
         this.name = name;
         this.length = length;
     }
+
+    protected Mp3(Parcel in)
+    {
+        path = in.readString();
+        name = in.readString();
+        length = in.readString();
+    }
+
+    public static final Creator<Mp3> CREATOR = new Creator<Mp3>() {
+        @Override
+        public Mp3 createFromParcel(Parcel in)
+        {
+            return new Mp3(in);
+        }
+
+        @Override
+        public Mp3[] newArray(int size)
+        {
+            return new Mp3[size];
+        }
+    };
 
     public String getPath() {
         return path;
@@ -48,5 +72,19 @@ public class Mp3 {
                 "name='" + name + '\'' +
                 ", length=" + length +
                 '}';
+    }
+
+    @Override
+    public int describeContents()
+    {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags)
+    {
+        dest.writeString(path);
+        dest.writeString(name);
+        dest.writeString(length);
     }
 }

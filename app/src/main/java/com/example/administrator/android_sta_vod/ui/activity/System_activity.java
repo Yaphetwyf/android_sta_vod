@@ -69,7 +69,6 @@ public String state="";
         switch (btnId){
             case R.id.btn_login:
                login();
-
                 break;
             case R.id.btn_cancel:
                 ndk_wrapper.instance().avsz_fini();

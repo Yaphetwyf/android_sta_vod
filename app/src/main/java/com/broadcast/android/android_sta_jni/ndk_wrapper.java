@@ -2,7 +2,6 @@ package com.broadcast.android.android_sta_jni;
 
 import android.util.Log;
 
-
 import com.example.administrator.android_sta_vod.bean.Root;
 import com.example.administrator.android_sta_vod.event.Avsz_info_event;
 import com.example.administrator.android_sta_vod.utils.XmlUtils;
@@ -25,6 +24,7 @@ public class ndk_wrapper {
     private ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
     private Video_listener video_listener;
     private Audio_listener audio_listener;
+    private Cb_file_listener cb_file_listener;
     int i = 0;
     int j = 0;
     public static ndk_wrapper instance() {
@@ -50,7 +50,6 @@ public class ndk_wrapper {
         if(null != video_listener){
             video_listener.video_play(sender,sender_type,buf,key_frm,width,height,fps);
         }
-
 
 
     }
@@ -81,17 +80,34 @@ public class ndk_wrapper {
         if(null != audio_listener){
             audio_listener.audio_play(sender,sender_type,buf,channel,bitrate,sample);
         }
-
-
     }
-
     public void set_audio_listener(Audio_listener audio_listener){
         this.audio_listener = audio_listener;
     }
     public interface Audio_listener{
         void audio_play(String sender, int sender_type, final byte[] buf, int channel, int bitrate, int sample);
     }
-
+    /**********************************文件下载********************************************/
+    //id 文件接收任务ID, avsz_file_transfer请求下载文件后，会生成下载任务ID
+    //文件大小
+    //full_path 请求下载的文件全路径[服务端PC上]，同avsz_file_transfer的参数
+    //buf 文件数据，及长度
+    //key 消息类型 如下：
+    // file_recv_start[文件传输开始]    file_recv_data[文件数据]     file_recv_end[文件传输线束]
+    // no_file[文件不存在]     open_failed[文件打开失败]     empty_file[空文件]
+    public void avsz_cb_file(int id, int file_size, String full_path,  String key,  byte[] buf)
+    {
+        Log.e("##### ", "id:" + id + " file_size:" + file_size + " full_path:" + full_path + " key:" + key + " data_len:" + buf.length);
+       if(cb_file_listener!=null){
+           cb_file_listener.cb_file_listener(id,file_size,full_path,key,buf);
+       }
+    }
+    public void set_cb_file_listener(Cb_file_listener cb_file_listener){
+    this.cb_file_listener=cb_file_listener;
+}
+    public interface Cb_file_listener{
+    void cb_file_listener(int id, int file_size, String full_path,  String key,  byte[] buf);
+}
     //*************************************************************************
     public void avsz_callback(String type, String key, byte[] buf) {
 
@@ -166,6 +182,8 @@ public class ndk_wrapper {
 
     public native int avsz_usr_call_req_cancel(String callee_name);
 
+    public native int avsz_file_transfer(String full_path);
+
     public native int avsz_usr_av_talk_start(String usr_name);
 
     public native int avsz_usr_av_talk_stop(String usr_name);
@@ -199,6 +217,7 @@ public class ndk_wrapper {
     public native int avsz_aec_start(int sample);
 
     public native void avsz_aec_stop();
+
 }
 //fps             ----->     // 25 [default]
 //bitstream_ctl   ----->    //ABR 2 [default]    //CQP 0     //CRF 1

@@ -1,7 +1,6 @@
 package com.example.administrator.android_sta_vod.ui.activity;
 
 import android.content.AsyncQueryHandler;
-import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -59,10 +58,6 @@ public class Audio_activity extends Base_activity {
             }
         });
 
-
-
-
-
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -74,16 +69,16 @@ public class Audio_activity extends Base_activity {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                       /* Cursor cursor = (Cursor) parent.getItemAtPosition(position);
+                        Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                         ArrayList<AudioBean> audioDatas= getAllAudioDatas(cursor);
-                       String str =audioDatas.get(position).path;
-                        File file=new File(str);
+                       String path =audioDatas.get(position).path;
+                        File file=new File(path);
 
                         if(file!=null){
                           file.delete();
-
+                            deleteMusic(path);
                         }
-                        mAdapter.notifyDataSetChanged();*/
+                        mAdapter.notifyDataSetChanged();
 
                     }
                 });
@@ -100,11 +95,12 @@ public class Audio_activity extends Base_activity {
             }
         });
     }
-    private int[] _ids;
-    private void deleteMusic(int position){
-        this.getContentResolver().delete(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                MediaStore.Audio.Media._ID  + "=" + _ids[position],
-                null);
+
+    private void deleteMusic(String path){
+        getApplicationContext().getContentResolver().delete(
+                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                MediaStore.MediaColumns.DATA + "='" + path + "'", null
+        );
     }
     /**
      * 获取所有的音频数据
@@ -114,7 +110,7 @@ public class Audio_activity extends Base_activity {
     private ArrayList<AudioBean> getAllAudioDatas(Cursor cursor) {
         ArrayList<AudioBean> audioData = new ArrayList<AudioBean>();
         cursor.moveToFirst();
-        _ids = new int[cursor.getCount()];// 选指向第一条数据
+
         do {
             audioData.add(AudioBean.fromCursor(cursor));
         } while(cursor.moveToNext());

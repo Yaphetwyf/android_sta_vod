@@ -363,15 +363,11 @@ public class User_talk_activity extends AppCompatActivity implements SurfaceHold
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        switch(keyCode) {
-            case KeyEvent.KEYCODE_BACK:
-            case KeyEvent.KEYCODE_HOME:
-            case KeyEvent.KEYCODE_MENU:
-
-                return true;
-            default:
-                return false;
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            btnCancel.performClick();
+            return true;
         }
+        return super.onKeyDown(keyCode, event);
     }
     @Override
     protected void onDestroy() {

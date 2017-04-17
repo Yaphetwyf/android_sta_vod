@@ -137,8 +137,6 @@ public class Audio_play_activity extends Base_activity {
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-
-
             Audioplay_service.MyBinder binder = (Audioplay_service.MyBinder) service;
             mService = binder.mService;
             mService.openAudio();

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">烽火科技</string>
+    <string name="app_name">峰火科技</string>
 
     <string name="terminationstate">终端状态</string>
     <string name="userstate">呼叫主机</string>
@@ -188,8 +188,12 @@
     <string name="hang_up">挂断</string>
     <string name="exit_procedure">退出程序</string>
     <string name="lost_connection">已掉线,重连中</string>
-    <string name="are_you_sure">确定吗</string>
+    <string name="are_you_sure">确定要永久删除此歌曲吗</string>
     <string name="net_connect_failure">网络连接失败,请检查网络状态</string>
+    <string name="please_goto_login">请去系统设置界面登入</string>
+    <string name="all_select">全选</string>
+    <string name="selected">已选中</string>
+    <string name="song">首歌</string>
     <string name="server_connect_failure">服务器连接失败</string>
     <string name="check_username_password">请检查用户名或密码是否正确</string>
     <string name="add_task_failure">添加任务失败</string>
