@@ -11,6 +11,15 @@ public class FileBean implements Parcelable{
     private String pid;
     private ArrayList<FileBean> children;
 
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    private String path;
     protected FileBean(Parcel in)
     {
         id = in.readString();
@@ -72,7 +81,6 @@ public class FileBean implements Parcelable{
                 "id='" + id + '\'' +
                 ", pid='" + pid + '\'' +
                 ", children=" + children +
-
                 ", name='" + name + '\'' +
                 '}';
     }

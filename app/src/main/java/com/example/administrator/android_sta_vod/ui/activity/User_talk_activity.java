@@ -1,11 +1,14 @@
 package com.example.administrator.android_sta_vod.ui.activity;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.PixelFormat;
 import android.media.AudioFormat;
 import android.media.AudioTrack;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -15,7 +18,6 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.LinearLayout;
 
 import com.broadcast.android.android_sta_jni.ndk_wrapper;
 import com.example.administrator.android_sta_vod.R;
@@ -23,6 +25,7 @@ import com.example.administrator.android_sta_vod.endecode.H264Decoder;
 import com.example.administrator.android_sta_vod.endecode.Packet;
 import com.example.administrator.android_sta_vod.endecode.Pcm_packet;
 import com.example.administrator.android_sta_vod.event.Avsz_info_event;
+import com.example.administrator.android_sta_vod.service.Audioplay_service;
 import com.example.administrator.android_sta_vod.utils.AudioCapturer;
 import com.example.administrator.android_sta_vod.utils.Audio_track_util;
 import com.example.administrator.android_sta_vod.utils.T;
@@ -38,9 +41,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 import static android.R.attr.start;
 
@@ -49,16 +50,10 @@ import static android.R.attr.start;
  */
 
 public class User_talk_activity extends AppCompatActivity implements SurfaceHolder.Callback {
-
-
    private SurfaceView svNear;
-
     private SurfaceView svFar;
 
-    @BindView(R.id.btn_cancel)
-    Button btnCancel;
-    @BindView(R.id.ll_button)
-    LinearLayout llButton;
+
     public static final int FLAG_HOMEKEY_DISPATCHED = 0x80000000;//定义屏蔽参数
     private String tag = "USER_TALK_ACTIVITY";
     private Video_util video_util;
@@ -167,18 +162,23 @@ public class User_talk_activity extends AppCompatActivity implements SurfaceHold
     private String username;
     private AudioCapturer capturer;
     private long curtime;
-
+    private Button btnCancel;
+    private Audioplay_service mService;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_talk);
+        Intent intent1 = new Intent(this, Audioplay_service.class);
+        bindService(intent1, mServiceConnection, BIND_AUTO_CREATE);
         svFar=(SurfaceView) findViewById(R.id.sv_far);
+        btnCancel = (Button) findViewById(R.id.btn_user_talk_cancel);
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
         init_view();
         init_video();
         init_audio();
         init_event();
+        init_listener();
         video_util.initMediaCodec();
         Log.e(tag,"onCreate");
 
@@ -187,6 +187,24 @@ public class User_talk_activity extends AppCompatActivity implements SurfaceHold
         this.getWindow().setFlags(FLAG_HOMEKEY_DISPATCHED, FLAG_HOMEKEY_DISPATCHED);
     }
 
+    ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Audioplay_service.MyBinder binder = (Audioplay_service.MyBinder) service;
+            mService = binder.mService;
+            if(mService!=null){
+                if(mService.isPlaying()){
+                    mService.pause();
+
+                }
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+        }
+    };
     private void init_view() {
 
         username = getIntent().getStringExtra("user_name");
@@ -337,21 +355,16 @@ public class User_talk_activity extends AppCompatActivity implements SurfaceHold
         });
         Log.d("audiostart", start + "");
     }
-
-    @OnClick({R.id.btn_cancel})
-    public void onClick(View view) {
-        switch (view.getId()) {
-
-            case R.id.btn_cancel:
-
+    private void init_listener() {
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 ndk_wrapper.instance().avsz_async_send(username, "user_stop");
                 setResult(0, new Intent());
                 finish();
-                break;
-        }
+            }
+        });
     }
-
-
 
     @Override
     protected void onStop() {
@@ -372,7 +385,8 @@ public class User_talk_activity extends AppCompatActivity implements SurfaceHold
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        // 解绑服务
+        unbindService(mServiceConnection);
         if (null != capturer) {
             if (capturer.isCaptureStarted()) {
                 capturer.stopCapture();

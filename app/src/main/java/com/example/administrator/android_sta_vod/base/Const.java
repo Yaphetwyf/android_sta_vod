@@ -28,5 +28,5 @@ public class Const {
     public static final String task = "TASK";
     //下载路径
     public static final String download = "DOWNLOAD";
-
+    public static boolean speaking = false;
 }

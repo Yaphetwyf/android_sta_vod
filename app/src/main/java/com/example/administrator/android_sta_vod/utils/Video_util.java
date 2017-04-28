@@ -32,8 +32,8 @@ import java.util.concurrent.BlockingQueue;
 public class Video_util {
 
     private int framerate = 25;
-    private int width = 640;
-    private int height = 480;
+    private int width = 1280;
+    private int height = 720;
     private int bitrate;
     private String path = "/mnt/sdcard/videoutil.h264";
     private NV21Convertor mConvertor;

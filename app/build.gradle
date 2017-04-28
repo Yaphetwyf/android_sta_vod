@@ -6,7 +6,7 @@ android {
     defaultConfig {
         applicationId "com.example.administrator.fenghuo"
         minSdkVersion 16
-        targetSdkVersion 25
+        targetSdkVersion 21
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -45,4 +45,5 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
     compile 'com.jakewharton:butterknife:8.4.0'
     compile 'com.thoughtworks.xstream:xstream:1.4.9'
+
 }

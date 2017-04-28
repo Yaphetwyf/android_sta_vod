@@ -6,11 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -45,18 +43,16 @@ public class Remote_play_activity extends AppCompatActivity implements View.OnCl
     private ArrayList<FileBean> mRoot;
     private MusicAdapter mMusicAdapter;
     private ArrayList<MusicBean> mSelect_data;
-    private ImageView mIv_clear;
-    private ImageView mIv_search;
-    private EditText mEt_search;
+
     private ArrayList<FileBean> up_datas;
-    private ImageView mIv_up;
+    private ImageButton mIv_up;
     private ImageView mIv_down;
     private Stack<ArrayList<FileBean>> retreat_stack;
     private Stack<ArrayList<FileBean>> advance_stack;
     private TextView mTv_cancel;
     private TextView mTv_sel;
     private TextView mTv_confirm;
-    private TextView mTv_all_select;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)    {
@@ -85,16 +81,14 @@ public class Remote_play_activity extends AppCompatActivity implements View.OnCl
     private void init_view()
     {
         mRv_addmusic = (RecyclerView) findViewById(R.id.rv_addmusic);
-        mIv_clear = (ImageView) findViewById(R.id.iv_clear);
-        mIv_search = (ImageView) findViewById(R.id.iv_search);
-        mEt_search = (EditText) findViewById(R.id.et_search);
-        mIv_up = (ImageView) findViewById(R.id.iv_up);
-        mIv_down = (ImageView) findViewById(R.id.iv_down);
+
+
+        mIv_up = (ImageButton) findViewById(R.id.iv_up);
         mTv_cancel = (TextView) findViewById(R.id.tv_cancel);
         mTv_sel = (TextView) findViewById(R.id.tv_sel);
         mTv_sel.setText(Ui_utils.get_string(R.string.selected) + "0" + Ui_utils.get_string(R.string.song));
         mTv_confirm = (TextView) findViewById(R.id.tv_confirm);
-        mTv_all_select = (TextView) findViewById(R.id.tv_all_select);
+
         if (null == mData)
         {
             Log.d(tag, "mdata == null");
@@ -110,14 +104,11 @@ public class Remote_play_activity extends AppCompatActivity implements View.OnCl
     private void init_event()
     {
         adapter_addlis();
-        et_search_addlis();
-        mIv_clear.setOnClickListener(this);
-        mIv_search.setOnClickListener(this);
+      //  et_search_addlis();
         mIv_up.setOnClickListener(this);
-        mIv_down.setOnClickListener(this);
         mTv_cancel.setOnClickListener(this);
         mTv_confirm.setOnClickListener(this);
-        mTv_all_select.setOnClickListener(this);
+
     }
 
     private void adapter_addlis()
@@ -198,7 +189,6 @@ public class Remote_play_activity extends AppCompatActivity implements View.OnCl
                             ((MusicBean) children.get(i)).set_select(false);
                             mSelect_data.remove((MusicBean) children.get(i));
                         }
-
                     }
                 }
                 mTv_sel.setText(Ui_utils.get_string(R.string.selected) + mSelect_data.size() + Ui_utils.get_string(R
@@ -207,39 +197,6 @@ public class Remote_play_activity extends AppCompatActivity implements View.OnCl
         });
     }
 
-    private void et_search_addlis()
-    {
-        mEt_search.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after)
-            {
-                mIv_clear.setVisibility(View.VISIBLE);
-                mIv_search.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count)
-            {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s)
-            {
-                String msg = mEt_search.getText().toString();
-                if ("".equals(msg))
-                {
-                    mMusicAdapter.set_data(mData);
-                } else
-                {
-                    mMusicAdapter.set_data((ArrayList<FileBean>) filter(mData, msg));
-                    mData = (ArrayList<FileBean>) filter(mData,msg);
-                }
-                mIv_clear.setVisibility(View.GONE);
-                mIv_search.setVisibility(View.VISIBLE);
-            }
-        });
-    }
 
     private static List<FileBean> filter(List<FileBean> models, String query)
     {
@@ -277,39 +234,9 @@ public class Remote_play_activity extends AppCompatActivity implements View.OnCl
     {
         switch (v.getId())
         {
-            case R.id.tv_all_select:
 
-                for (int i = 0; i < mData.size(); i++)
-                {
-                    if (mData.get(i) instanceof MusicBean)
-                    {
-                        if (!mData.get(i).isSelect())
-                        {
-                            ((MusicBean) mData.get(i)).set_select(true);
-                            mSelect_data.add((MusicBean) mData.get(i));
-                        }
-                    }
-                }
-                mTv_sel.setText(Ui_utils.get_string(R.string.selected) + mSelect_data.size() + Ui_utils.get_string(R
-                        .string.song));
-                mMusicAdapter.notifyDataSetChanged();
-                mTv_all_select.setClickable(false);
-                break;
             case R.id.tv_cancel:
-               /* for (int i = 0; i < mData.size(); i++)
-                {
-                    if (mData.get(i) instanceof MusicBean)
-                    {
-                        if (mData.get(i).isSelect())
-                        {
-                            ((MusicBean) mData.get(i)).set_select(false);
-                            mSelect_data.remove(mData.get(i));
-                        }
-                    }
-                }
-                mTv_sel.setText(Ui_utils.get_string(R.string.selected) + mSelect_data.size() + Ui_utils.get_string(R
-                        .string.song));
-                mMusicAdapter.notifyDataSetChanged();*/
+
                 finish();
                 break;
             case R.id.tv_confirm:
@@ -327,19 +254,7 @@ public class Remote_play_activity extends AppCompatActivity implements View.OnCl
                 confirm_intent.putExtras(confirm_bundle);
                 startActivity(confirm_intent);
                 break;
-            case R.id.iv_clear:
-                mEt_search.setText("");
-                break;
-            case R.id.iv_search:
-                String msg = mEt_search.getText().toString();
-                if ("".equals(msg))
-                {
-                    mMusicAdapter.set_data(mData);
-                } else
-                {
-                    mMusicAdapter.set_data((ArrayList<FileBean>) filter(mData, msg));
-                }
-                break;
+
             case R.id.iv_up:
                 //空文件夹
 
@@ -352,18 +267,7 @@ public class Remote_play_activity extends AppCompatActivity implements View.OnCl
                 }
                 Log.d(tag, "click_up");
                 break;
-            case R.id.iv_down:
-                if (!advance_stack.empty())
-                {
-                    retreat_stack.push(mData);
-                    mData = advance_stack.pop();
-                    mMusicAdapter.set_data(mData);
-                    Log.d(tag, "!advance_stack.empty()");
 
-                }
-                Log.d(tag, "click_down");
-//                mMusicAdapter.notifyDataSetChanged();
-                break;
         }
     }
 

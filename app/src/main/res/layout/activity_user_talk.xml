@@ -3,6 +3,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@color/tackback_bg"
+               android:keepScreenOn="true"
               android:orientation="vertical">
 
     <LinearLayout
@@ -35,8 +36,8 @@
             android:orientation="vertical">
 
             <Button
-                android:id="@+id/btn_cancel"
-                android:layout_width="500dp"
+                android:id="@+id/btn_user_talk_cancel"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:text="@string/hang_up"

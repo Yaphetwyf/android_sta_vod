@@ -6,6 +6,8 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="white">#ffffffff</color>
+    <color name="selector_tab_color">#decb6d</color>
+
     <color name="black">#000</color>
     <color name="red">#f00</color>
     <color name="green">#0f0</color>
@@ -21,7 +23,7 @@
 
     <color name="tab_text_normal">#8D9AA0</color>
     <color name="tab_text_selected">#5CB292</color>
-    <color name="tab_indicator">#5CB292</color>
+    <color name="tab_indicator">#dacb6e</color>
 
     <color name="list_divider">#449C9A9C</color>
     <color name="list_item_bg_normal">#ffEBEBEB</color>
@@ -36,5 +38,7 @@
     <color name="MediumSpringGreen">#00FA9A</color>
     <color name="SpringGreen">#00FF7F</color>
     <color name="LimeGreen">#32CD32</color>
-
+    <color name="filenameselected">#28CFE4</color>
+    <color name="task_mp3">#408AEE</color>
+    <color name="titleBlue">#47453d</color>
 </resources>

@@ -12,11 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-/**
- * 类Util的实现描述：//TODO 类实现描述
- *
- * @author HELONG 2016/3/8 17:42
- */
+
 public class Util {
 
     /**
@@ -79,6 +75,4 @@ public class Util {
             }
         }
     }
-
-
 }

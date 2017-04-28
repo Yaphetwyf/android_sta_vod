@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     android:layout_width="match_parent"
+    android:id="@+id/rl_real_time_fragment"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_centerInParent="true"
+        android:src="@drawable/real_time_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/iv_real_time" />
+
+    <TextView
+
+        android:text="开始采播"
+        android:layout_marginTop="12dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="23sp"
+        android:textColor="@color/black"
+        android:layout_below="@+id/iv_real_time"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/tv_real_time_start" />
+</RelativeLayout>

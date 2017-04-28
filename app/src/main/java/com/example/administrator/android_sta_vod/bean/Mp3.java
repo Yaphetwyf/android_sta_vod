@@ -2,6 +2,7 @@ package com.example.administrator.android_sta_vod.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.widget.ProgressBar;
 
 /**
  * Created by AVSZ on 2017/1/10.
@@ -11,6 +12,45 @@ public class Mp3 implements Parcelable{
     private String path;
     private String name;
     private String length;
+    private ProgressBar progressBar;
+
+    public int getMax_length() {
+        return max_length;
+    }
+
+    public void setMax_length(int max_length) {
+        this.max_length = max_length;
+    }
+
+    private int max_length;
+    public boolean isDownload() {
+        return isDownload;
+    }
+
+    public void setDownload(boolean download) {
+        isDownload = download;
+    }
+
+    private boolean isDownload;
+
+    public int getProgress() {
+        return progress;
+    }
+
+    public void setProgress(int progress) {
+        this.progress = progress;
+    }
+
+    private int progress;
+    public void setProgressBar(ProgressBar progressBar) {
+        this.progressBar = progressBar;
+    }
+
+    public ProgressBar getProgressBar() {
+        return progressBar;
+    }
+
+
 
     public Mp3(){
 

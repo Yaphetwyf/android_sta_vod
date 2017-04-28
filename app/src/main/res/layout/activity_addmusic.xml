@@ -8,6 +8,22 @@
     android:orientation="vertical"
     tools:context=".ui.activity.Remote_play_activity">
     <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:background="@drawable/background"
+        android:layout_height="50dp">
+
+        <ImageButton
+            android:id="@+id/iv_up"
+            android:src="@drawable/titlebar_btn_back"
+            android:background="@color/transparent"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"/>
+
+
+    </RelativeLayout>
+
+    <!--<RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="70dp"
 
@@ -39,52 +55,8 @@
             android:layout_centerInParent="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-       <RelativeLayout
 
-           android:layout_alignParentRight="true"
-           android:background="@drawable/search_box"
-           android:gravity="center_vertical"
-           android:focusable="true"
-           android:focusableInTouchMode="true"
-           android:layout_marginTop="24dp"
-           android:layout_marginRight="40dp"
-           android:layout_width="300dp"
-           android:layout_height="45dp">
-
-           <ImageView
-               android:id="@+id/iv_search"
-               android:src="@drawable/search"
-               android:clickable="true"
-               android:layout_marginRight="10dp"
-               android:layout_marginLeft="10dp"
-               android:layout_toRightOf="@+id/et_search"
-               android:layout_centerVertical="true"
-               android:layout_width="45dp"
-               android:layout_height="45dp"/>
-           <EditText
-               android:id="@+id/et_search"
-               android:singleLine="true"
-               android:layout_marginLeft="30dp"
-               android:layout_centerVertical="true"
-               android:layout_width="220dp"
-               android:layout_height="wrap_content"
-               android:textSize="20sp"
-               android:imeOptions="actionSearch"
-               android:layout_alignParentTop="true"
-               />
-           <ImageView
-               android:id="@+id/iv_clear"
-               android:clickable="true"
-               android:layout_marginLeft="10dp"
-               android:layout_marginRight="10dp"
-               android:layout_toRightOf="@+id/et_search"
-               android:layout_centerVertical="true"
-               android:visibility="gone"
-               android:src="@drawable/clear"
-               android:layout_width="45dp"
-               android:layout_height="45dp"/>
-       </RelativeLayout>
-    </RelativeLayout>
+    </RelativeLayout>-->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_addmusic"
         android:layout_width="match_parent"

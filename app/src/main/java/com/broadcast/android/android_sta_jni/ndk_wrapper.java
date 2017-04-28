@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.example.administrator.android_sta_vod.bean.Root;
 import com.example.administrator.android_sta_vod.event.Avsz_info_event;
+import com.example.administrator.android_sta_vod.utils.File_utils;
 import com.example.administrator.android_sta_vod.utils.XmlUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -95,7 +96,7 @@ public class ndk_wrapper {
     //key 消息类型 如下：
     // file_recv_start[文件传输开始]    file_recv_data[文件数据]     file_recv_end[文件传输线束]
     // no_file[文件不存在]     open_failed[文件打开失败]     empty_file[空文件]
-    public void avsz_cb_file(int id, int file_size, String full_path,  String key,  byte[] buf)
+    public void avsz_cb_file(int id, long file_size, String full_path,  String key,  byte[] buf)
     {
         Log.e("##### ", "id:" + id + " file_size:" + file_size + " full_path:" + full_path + " key:" + key + " data_len:" + buf.length);
        if(cb_file_listener!=null){
@@ -106,29 +107,40 @@ public class ndk_wrapper {
     this.cb_file_listener=cb_file_listener;
 }
     public interface Cb_file_listener{
-    void cb_file_listener(int id, int file_size, String full_path,  String key,  byte[] buf);
+    void cb_file_listener(int id, long file_size, String full_path,  String key,  byte[] buf);
 }
     //*************************************************************************
     public void avsz_callback(String type, String key, byte[] buf) {
 
 
+
         cachedThreadPool.execute(new Runnable() {
             @Override
-            public void run() {
-                if(!"xml".equals(key)){
+            public void run()
+            {
+
+                if (!"xml".equals(key))
+                {
                     EventBus.getDefault().post(new Avsz_info_event(type, key, new String(buf)));
                 }
-                if(new String(buf).contains("invalid_pwd")){
+                if ("login_ret_usr_list".equals(type))
+                {
                     EventBus.getDefault().post(new Avsz_info_event(type, key, new String(buf)));
                 }
-                if ("xml".equals(key)) {
-                  Root root = XmlUtils.toBean(Root.class, buf);
-                    if (null == root) {
-                        return;
-                    }
+                if("real_cap_start_ret".equals(type)){
+                    EventBus.getDefault().post(new Avsz_info_event(type, key, new String(buf)));
+                }
+                if (new String(buf).contains("invalid_pwd"))
+                {
+                    EventBus.getDefault().post(new Avsz_info_event(type, key, new String(buf)));
+                }
+                if ("login_ret_usr_list".equals(type))
+                {
+                    Root root = XmlUtils.toBean(Root.class, buf);
+                    Log.d(tag, "root == " + root.toString());
                     EventBus.getDefault().post(root);
                     String text = XmlUtils.toXml(root);
-                    Log.d("texttext",text);
+                    Log.d("texttext", text);
                     if(null != root.getAreas()){
                         EventBus.getDefault().post(root.getAreas());
                     }
@@ -147,12 +159,8 @@ public class ndk_wrapper {
 
                 }
             }
-
         });
-
-
-        Log.e("#####", "type:" + type + " key:" + key + " value:" + new String(buf));
-
+        Log.d("#####", "type:" + type + " key:" + key + " value:" + new String(buf));
     }
 
 
@@ -214,10 +222,28 @@ public class ndk_wrapper {
     //use before  avsz_term_av_talk_start or avsz_usr_av_start ...
     public native int avsz_usr_call_req_ret(String caller_name, int self_status);
 
+
+    //xml :
+    // <terms>
+    //<term id="" />
+    //<term id="" />
+    // ...
+    //<term id="" />
+    // </terms>
+    //请求后 ，在avsz_callback中回调返回xml
+    public native int avsz_real_cap_start(String xml);
+
+    //io_idx [1或2]
+    //status [0或1]
+    public native int avsz_term_io_ctrl(int term_id, int io_idx, int status);
+    public native int avsz_real_cap_stop();
+
     public native int avsz_aec_start(int sample);
 
-    public native void avsz_aec_stop();
+    public native int avsz_query_talk_sto(int log_id, String caller_name, String callee_name, String call_time, int
+            caller_type, int callee_type);
 
+    public native void avsz_aec_stop();
 }
 //fps             ----->     // 25 [default]
 //bitstream_ctl   ----->    //ABR 2 [default]    //CQP 0     //CRF 1

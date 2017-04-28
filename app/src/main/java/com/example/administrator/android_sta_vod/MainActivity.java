@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 
 import com.broadcast.android.android_sta_jni.ndk_wrapper;
 import com.example.administrator.android_sta_vod.app.My_application;
+import com.example.administrator.android_sta_vod.base.Const;
 import com.example.administrator.android_sta_vod.bean.User;
 import com.example.administrator.android_sta_vod.bean.Users;
 import com.example.administrator.android_sta_vod.event.Avsz_info_event;
@@ -21,11 +22,15 @@ import com.example.administrator.android_sta_vod.ui.activity.About_us_activity;
 import com.example.administrator.android_sta_vod.ui.activity.Audio_activity;
 import com.example.administrator.android_sta_vod.ui.activity.Base_activity;
 import com.example.administrator.android_sta_vod.ui.activity.Call_back_activity;
+import com.example.administrator.android_sta_vod.ui.activity.Real_time_activity;
 import com.example.administrator.android_sta_vod.ui.activity.Remote_play_activity;
 import com.example.administrator.android_sta_vod.ui.activity.System_activity;
+import com.example.administrator.android_sta_vod.ui.activity.Talk_back_activity;
+import com.example.administrator.android_sta_vod.ui.activity.Time_broadcast_activity;
 import com.example.administrator.android_sta_vod.ui.activity.User_talk_activity;
-import com.example.administrator.android_sta_vod.ui.activity.dialogs.Dialog_answer;
+import com.example.administrator.android_sta_vod.ui.activity.Video_play_activity;
 import com.example.administrator.android_sta_vod.ui.activity.dialogs.Dialog_calluser;
+import com.example.administrator.android_sta_vod.ui.activity.dialogs.Dialog_term_answer;
 import com.example.administrator.android_sta_vod.ui.activity.dialogs.Dialog_text_answer;
 import com.example.administrator.android_sta_vod.utils.NetUtils;
 import com.example.administrator.android_sta_vod.utils.SPUtils;
@@ -45,16 +50,19 @@ import static com.example.administrator.android_sta_vod.base.Const.user_name;
 
 public class MainActivity extends Base_activity {
 
-
+    private final static int requestCode = 105;
     private LinearLayout local_ll_;
     private LinearLayout about_ll_;
     private LinearLayout system_ll_;
     private LinearLayout call_ll_;
     private LinearLayout remote_ll_;
+    private LinearLayout video_play_ll_;
+    private LinearLayout broadercast_ll_;
+    private LinearLayout real_time_ll_;
     private Dialog_text_answer dialog_text_answer;
     private Dialog_calluser dialog_calluser;
     private String tag = "USERS_FRAGMENT";
-    private Dialog_answer dialog_answer;
+
     private ArrayList<User> user_list;
     private Users users;
     private static final int request_code = 106;
@@ -62,7 +70,7 @@ public class MainActivity extends Base_activity {
     private MediaPlayer player;
     private AssetManager assetManager;
     private FrameLayout fl_off_line;
-
+    private Dialog_term_answer dialog_term_answer;
     @Override
     public int get_layout_res() {
         return R.layout.activity_main;
@@ -76,15 +84,21 @@ public class MainActivity extends Base_activity {
         system_ll_ = findView(R.id.main_ll_system);
         call_ll_=findView(R.id.main_ll_call);
         remote_ll_= findView(R.id.main_ll_remote);
+        video_play_ll_= findView(R.id.main_ll_videoplay);
+        broadercast_ll_=findView(R.id.main_ll_broadercast);
+       real_time_ll_= findView(R.id.main_ll_real_time);
     }
 
     @Override
     public void init_listener() {
+        video_play_ll_.setOnClickListener(this);
         local_ll_.setOnClickListener(this);
         about_ll_.setOnClickListener(this);
         system_ll_.setOnClickListener(this);
         call_ll_.setOnClickListener(this);
         remote_ll_.setOnClickListener(this);
+        broadercast_ll_.setOnClickListener(this);
+        real_time_ll_.setOnClickListener(this);
     }
 
     @Override
@@ -167,6 +181,19 @@ public class MainActivity extends Base_activity {
                 Intent remote_intent=new Intent(getApplicationContext(),Remote_play_activity.class);
                 startActivity(remote_intent);
                 break;
+            case  R.id.main_ll_videoplay://视频点播界面
+                Intent video_play_intent=new Intent(getApplicationContext(),Video_play_activity.class);
+                startActivity(video_play_intent);
+                break;
+            case R.id.main_ll_broadercast:  //定时广播界面
+                Intent broadercast_intent=new Intent(getApplicationContext(),Time_broadcast_activity.class);
+                startActivity(broadercast_intent);
+                break;
+            case R.id.main_ll_real_time: //实时采播界面
+                Intent real_time_intent=new Intent(getApplicationContext(),Real_time_activity.class);
+                startActivity(real_time_intent);
+                break;
+
         }
     }
     //接收回调消息
@@ -224,8 +251,65 @@ public class MainActivity extends Base_activity {
                 }
             }
         }
-
+        if("term_call_req".equals(type)){
+            if (null != player) {
+                if (!player.isPlaying()) {
+                    player.start();
+                }
+            }
+            show_trem_ansdialog(type, key, value);
+        }
+        if("term_call_req_cancel".equals(type)){
+            if (null != player) {
+                if (player.isPlaying()) {
+                    player.pause();
+                    player.seekTo(0);
+                }
+            }
+            dialog_term_answer.dismiss();
+            dialog_term_answer=null;
+        }
     }
+
+    private void show_trem_ansdialog(String type, String key, String value) {
+        dialog_term_answer = new Dialog_term_answer(this);
+        dialog_term_answer.set_on_answer_listener(new Dialog_term_answer.On_answer_listener() {
+            @Override
+            public void answer_listener() {
+                if (null != player) {
+                    if (player.isPlaying()) {
+                        player.pause();
+                        player.seekTo(0);
+                    }
+                }
+                Intent intent = new Intent(Ui_utils.get_context(), Talk_back_activity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(Const.term_id, key);
+                bundle.putString(Const.term_name, value);
+                bundle.putString(Const.term_state,Ui_utils.get_string(R.string.calling));
+                intent.putExtras(bundle);
+                startActivityForResult(intent, requestCode);
+                dialog_term_answer.dismiss();
+                dialog_term_answer=null;
+            }
+        });
+        dialog_term_answer.set_on_refuse_listener(new Dialog_term_answer.On_refuse_listener() {
+            @Override
+            public void refuse_listener() {
+                if (null != player) {
+                    if (player.isPlaying()) {
+                        player.pause();
+                        player.seekTo(0);
+                    }
+                }
+                dialog_term_answer.dismiss();
+                dialog_term_answer=null;
+            }
+        });
+        dialog_term_answer.show();
+        dialog_term_answer.set_user(value);
+    }
+
     //显示回答的Dialog
     private void show_ansdialog(String type, String key, String value) {
         dialog_text_answer = new Dialog_text_answer(this);
@@ -293,6 +377,10 @@ public class MainActivity extends Base_activity {
         if(dialog_text_answer!=null){
             dialog_text_answer.dismiss();
             dialog_text_answer=null;
+        }
+        if(dialog_term_answer!=null){
+            dialog_term_answer.dismiss();
+            dialog_term_answer=null;
         }
     }
 

@@ -1,13 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:id="@+id/ll_setlect_music"
     android:layout_height="match_parent">
 <TextView
     android:id="@+id/tv_item_play_list"
     android:textSize="30dp"
     android:textColor="#000"
     android:padding="8dp"
-    android:layout_width="match_parent"
+    android:layout_width="0dp"
+    android:text="xxx"
+    android:layout_weight="9"
     android:layout_height="wrap_content" />
-
+   <ImageView
+android:id="@+id/iv_down_music_over"
+       android:layout_weight="1"
+       android:layout_width="0dp"
+       android:visibility="gone"
+       android:src="@drawable/pause"
+       android:layout_height="30dp" />
+    <!--<ProgressBar
+        android:id="@+id/progressBar_horizontal"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:progress="20"
+        android:max="100"
+        android:layout_height="15dp"
+       />-->
 </LinearLayout>

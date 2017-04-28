@@ -26,21 +26,29 @@ import static com.example.administrator.android_sta_vod.base.Const.user_name;
 
 public class Beacon_util {
     private static String tag = "BEACON_UTIL";
-    public static void login(){
+
+    public static void login()
+    {
         String username = SPUtils.getString(Ui_utils.get_context(), user_name);
         String password = SPUtils.getString(Ui_utils.get_context(), pass_word);
         String server_address = SPUtils.getString(Ui_utils.get_context(), servers_address);
         boolean net_connect = NetUtils.isConnected(Ui_utils.get_context());
-        if(!(TextUtils.isEmpty(username) && TextUtils.isEmpty(password) && TextUtils.isEmpty(server_address))){
-            if(net_connect){
+        L.d(tag, "login");
+        if (!(TextUtils.isEmpty(username) && TextUtils.isEmpty(password) && TextUtils.isEmpty(server_address)))
+        {
+            if (net_connect)
+            {
                 ndk_wrapper.instance().avsz_init(server_address, (short) 1220, username, password);
-            }else {
+            } else
+            {
                 T.show_short(Ui_utils.get_string(R.string.net_connect_failure));
             }
         }
     }
+
     public static ArrayList<FileBean> progs_to_file(Progs progs)
     {
+
         return get_paths(progs);
     }
 
@@ -52,6 +60,7 @@ public class Beacon_util {
         String p1 = "";
         String p2 = "";
         String p3 = "";
+        String p4="";
         if (null == progs || null == progs.getProgs())
         {
             return null;
@@ -73,25 +82,28 @@ public class Beacon_util {
                 int i = p2.indexOf("/");
                 L.d("i=" + i);
                 p3 = p2.substring(p2.indexOf("/") + 1);
+                p4=p2.substring(0,p2.indexOf("/")+1);
+                SPUtils.putString(Ui_utils.get_context(), Const.download,p4);
                 p3 = p3 + "/" + prog.getName();
             }
-            String p4=p2.substring(0,p2.indexOf("/")+1);
-            SPUtils.putString(Ui_utils.get_context(), Const.download,p4 );
-            paths.add(new Path(p3,prog.getLength()));
+            paths.add(new Path(p3,prog.getLength(),path));
         }
         Collections.reverse(paths);
+        Log.d(tag,"paths == " + paths.toString());
         return init_data(paths);
     }
 
     public static ArrayList<FileBean> init_data(List<Path> paths)
     {
         ArrayList<FileBean> datas;
-        String root_path = "";
-        if (null == paths)
+
+        if (null == paths || 0 == paths.size())
         {
             datas = new ArrayList<>();
             return datas;
         }
+
+        String root_path = paths.get(paths.size()-1).getPath();
         //根路径
         ArrayList<FileBean> root = new ArrayList<>();
 
@@ -109,13 +121,14 @@ public class Beacon_util {
             {
                 fileBean = new FileBean();
             }
+
             fileBean.setId(path.getPath());
+            fileBean.setPath(path.getId());
             fileBean.setName(name);
             String[] split = path.getPath().split("/");
-            if (1 == split.length)
+            if (path.getPath().equals(root_path))
             {
                 fileBean.setPid(null);
-                root_path = path.getPath();
             } else
             {
                 int index = path.getPath().lastIndexOf("/");
@@ -159,6 +172,8 @@ public class Beacon_util {
         }
         //最开始数据源为根路径
         datas = root;
+        Log.d(tag,"root == " + root.toString());
+
         return root;
     }
 }

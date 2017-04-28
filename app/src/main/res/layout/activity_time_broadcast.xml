@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="match_parent">
+<include layout="@layout/title_bar_1"/>
+    <LinearLayout
+
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:textSize="30sp"
+            android:text="@string/task_broadcast_name"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:layout_height="match_parent" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:textSize="30sp"
+            android:text="@string/task_broadcast_state"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+    <ListView
+
+        android:layout_marginTop="15dp"
+        android:id="@+id/lv_time_broadcast_task"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp">
+
+    </ListView>
+
+    <LinearLayout
+        android:background="#d7d7d6"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <View
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+        <ImageButton
+            android:id="@+id/ib_hand_start"
+            android:src="@drawable/task_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <View
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+        <ImageButton
+            android:id="@+id/ib_hand_stop"
+            android:src="@drawable/task_stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <View
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+</LinearLayout>

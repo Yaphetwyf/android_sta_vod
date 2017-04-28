@@ -7,13 +7,9 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.TextView;
-
 
 import com.broadcast.android.android_sta_jni.ndk_wrapper;
 import com.example.administrator.android_sta_vod.R;
@@ -98,13 +94,11 @@ public class Call_back_activity extends Base_activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String  user_name=  userList.get(position).getName();
                 String  user_state= userList.get(position).getStatus();
-
                 user_list_adapter.notifyDataSetChanged();
                 if(ON_LINE.equals(user_state)){
                     show_calldialog(user_name,user_state);
                     ndk_wrapper.instance().avsz_usr_call_req(user_name);
                 }
-
             }
         });
     }
@@ -157,7 +151,6 @@ public class Call_back_activity extends Base_activity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(Users users) {
         userList = users.getUsers();
-        String s = users.getUsers().toString();
 
         user_list_adapter = new User_list_adapter(userList);
 
@@ -218,7 +211,6 @@ public class Call_back_activity extends Base_activity {
                         user_list_adapter.notifyDataSetChanged();
                     }
                 }
-
             }
             if ("usr_online".equals(type)) {
                 tv_title.setText(R.string.on_line);
@@ -290,7 +282,6 @@ public class Call_back_activity extends Base_activity {
                         player.seekTo(0);
                     }
                 }
-
                 dialog_text_answer.dismiss();
                 dialog_text_answer=null;
             }

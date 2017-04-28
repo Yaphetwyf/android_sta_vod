@@ -1,10 +1,13 @@
 package com.example.administrator.android_sta_vod.ui.activity;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
@@ -18,6 +21,7 @@ import com.broadcast.android.android_sta_jni.ndk_wrapper;
 import com.example.administrator.android_sta_vod.R;
 import com.example.administrator.android_sta_vod.adapter.Remote_play_list_adapter;
 import com.example.administrator.android_sta_vod.bean.Mp3;
+import com.example.administrator.android_sta_vod.service.Audioplay_service;
 import com.example.administrator.android_sta_vod.utils.File_utils;
 import com.example.administrator.android_sta_vod.utils.SPUtils;
 import com.example.administrator.android_sta_vod.utils.T;
@@ -41,7 +45,7 @@ public class Remote_paly_list_activity extends Base_activity {
     private static final int TYPE_UPDATE_CURRENT_POSITION = 0;
     private ListView play_list;
     private Remote_play_list_adapter play_list_adapter;
-    private MediaPlayer mediaPlayer;
+    private MediaPlayer media_player;
     private ArrayList<String> songArrayList; //播放声音列表
     private String music_load;
     private int songIndex = 0;
@@ -52,23 +56,22 @@ public class Remote_paly_list_activity extends Base_activity {
     private Button remote_toggle_play;
     private Button remote_switch_play_mode;
     private String SD_PATH;
-    /**
-     * 打开是否是同一首音频
-     * true： 不会从头开始播放
-     */
-    private boolean openThemSameAudio = false;
+    private long MAX_SIZE;
+    private int progress;
     private SeekBar sb_remote;
-    private SeekBar.OnSeekBarChangeListener mOnSeekBarChangeListener;
     private int duration;
     private TextView remote_current_position;
-
+    private int all_size;
+    private List<Mp3> domnload;
+    private ArrayList<Mp3> mp3s;
+    private Audioplay_service mService;
     @Override
     public int get_layout_res() {
         return R.layout.activity_remote_play_list;
     }
-
     @Override
     public void init_view() {
+
         play_list = findView(R.id.lv_remote_play_list);
         remote_prev = findView(R.id.btn_remote_prev);
         remote_next= findView(R.id.btn_remote_next);
@@ -84,64 +87,122 @@ public class Remote_paly_list_activity extends Base_activity {
         remote_prev.setOnClickListener(this);
         remote_toggle_play.setOnClickListener(this);
         remote_switch_play_mode.setOnClickListener(this);
-        mediaPlayer = new MediaPlayer();
-
-        mediaPlayer.setOnCompletionListener(new CompletionListener());
+        media_player = new MediaPlayer();
+        media_player.setOnCompletionListener(new CompletionListener());
         SD_PATH  = Environment.getExternalStorageDirectory() + "/";
         music_load= Environment.getExternalStorageDirectory() + "/"+"sdMusic"+"/";
         songArrayList = new ArrayList<String>();
         file_utils = new File_utils();
         ndk_wrapper.instance().set_cb_file_listener(new ndk_wrapper.Cb_file_listener() {
             @Override
-            public void cb_file_listener(int id, int file_size, String full_path, String key, byte[] buf) {
+            public void cb_file_listener(int id, long file_size, String full_path, String key, byte[] buf) {
                 Log.d("download","id"+id+"file_size"+file_size+"full_path"+full_path+"key"+key+"buf"+buf.length);
-                file_utils.write2SDFromInput("sdMusic", full_path.substring(full_path.lastIndexOf("/")),buf);
-                if(key.equals("file_recv_end")){
+                MAX_SIZE=file_size;
+                if(key.equals("file_recv_data")){
+                    file_utils.write2SDFromInput("sdMusic", full_path.substring(full_path.lastIndexOf("/")),buf);
+                        progress+=buf.length;
+                }
+                if(key.equals("file_recv_start")){
                    all_music_load = music_load+full_path.substring(full_path.lastIndexOf("/"));
                    songArrayList.add(all_music_load);
-             }
+                    for (int i = 0; i < songArrayList.size(); i++) {
+                        mp3s.get(i).setDownload(true);
+                    }
+//                    play_list_adapter.notifyDataSetChanged();
+                }
             }
         });
         play_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(songArrayList.size()-1<position){
+                    T.show_short(Ui_utils.get_string(R.string.music_loading));
+                    return;
+                }
                 songIndex=position;
+                play_list_adapter.setSelectedPosition(songIndex);
+                play_list_adapter.notifyDataSetInvalidated();
                 remote_toggle_play.setBackgroundResource(R.drawable.btn_audio_pause);
                  songplay();
-                updateCurrentPosition();
+                 updateUI();
             }
         });
-        // 用户滑动seekbar, 则实现快进快退功能
-        mOnSeekBarChangeListener =
-                new SeekBar.OnSeekBarChangeListener() {
 
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if (fromUser) { // 用户滑动seekbar, 则实现快进快退功能
-            seekTo(progress);
+    }
+    SeekBar.OnSeekBarChangeListener mOnSeekBarChangeListener
+            = new SeekBar.OnSeekBarChangeListener() {
+
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            if (fromUser) { // 用户滑动seekbar, 则实现快进快退功能
+                seekTo(progress);
+            }
         }
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-    }
-};
-    }
-
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+        }
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+        }
+    };
     private final class CompletionListener implements MediaPlayer.OnCompletionListener {
 
         @Override
         public void onCompletion(MediaPlayer mp) {
             next_song();
-
+            updateUI();
         }
     }
-    private void updtaeUI(){
+    @Override
+    public void init_data() {
+        Intent intent1 = new Intent(this, Audioplay_service.class);
+        bindService(intent1, mServiceConnection, BIND_AUTO_CREATE);
+        String load = SPUtils.getString(Ui_utils.get_context(), download);
+        createSDDir("sdMusic");
+        Log.d("load",load);
+        String path3="";
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        mp3s = bundle.getParcelableArrayList("mp3s");
+        List<String> music_file = get_music_file();
+        all_size = mp3s.size();
 
+        for(int i = 0; i< mp3s.size(); i++){
+            path3=load+ mp3s.get(i).getPath();
+            String path1 = mp3s.get(i).getName();
+            if(music_file.contains(path1)){
+                songArrayList.add(music_load+path1);
+                mp3s.get(i).setDownload(true);
+            }else {
+                mp3s.get(i).setDownload(false);
+                download(path3);
+            }
+        }
+        play_list_adapter = new Remote_play_list_adapter(mp3s);
+        play_list.setAdapter(play_list_adapter);
+    }
+    ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Audioplay_service.MyBinder binder = (Audioplay_service.MyBinder) service;
+            mService = binder.mService;
+            if(mService!=null){
+                if(mService.isPlaying()){
+                    mService.pause();
+
+                }
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+        }
+    };
+    private void updateUI(){
+        duration = media_player.getDuration();      // 获取音频播放的总时长
+        sb_remote.setMax(duration);
+        updateCurrentPosition();
     }
     private Random mRandom = new Random();
     private void next_song() {
@@ -158,8 +219,10 @@ public class Remote_paly_list_activity extends Base_activity {
                 songIndex = mRandom.nextInt(songArrayList.size());
                 break;
         }
+        play_list_adapter.setSelectedPosition(songIndex);
+        play_list_adapter.notifyDataSetInvalidated();
       songplay();
-        updateCurrentPosition();
+        updateUI();
     }
     private void prev_song() {
         switch (mCurrentPlayMode) {
@@ -174,9 +237,12 @@ public class Remote_paly_list_activity extends Base_activity {
             case PLAY_MODE_RANDOM:     // 随机播放
                 songIndex = mRandom.nextInt(songArrayList.size());
                 break;
+
         }
+        play_list_adapter.setSelectedPosition(songIndex);
+        play_list_adapter.notifyDataSetInvalidated();
         songplay();
-        updateCurrentPosition();
+        updateUI();
     }
     private void download(String path) {
         new Thread(new Runnable() {
@@ -187,37 +253,13 @@ public class Remote_paly_list_activity extends Base_activity {
         }).start();
     }
 
-    @Override
-    public void init_data() {
-        String load = SPUtils.getString(Ui_utils.get_context(), download);
-        createSDDir("sdMusic");
-        Log.d("load",load);
-        String path3="";
-        Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
-        ArrayList<Mp3> mp3s = bundle.getParcelableArrayList("mp3s");
-        List<String> music_file = get_music_file();
 
-        for(int i=0;i<mp3s.size();i++){
-            path3=load+mp3s.get(i).getPath();
 
-            String path1 = mp3s.get(i).getName();
-         if(music_file.contains(path1)){
-             songArrayList.add(music_load+path1);
-         }else {
-             download(path3);
-         }
-        }
-        play_list_adapter = new Remote_play_list_adapter(mp3s);
-        play_list.setAdapter(play_list_adapter);
-    }
     //获取文件名称
     public List<String> get_music_file(){
         // 音乐列表
         List<String> picList = new ArrayList<String>();
         File mfile = new File(music_load);
-
-
 
         File[] files = mfile.listFiles();
         // 将所有的文件存入ArrayList中,并过滤所有图片格式的文件
@@ -251,8 +293,8 @@ public class Remote_paly_list_activity extends Base_activity {
         }
     }
     public void seekTo(int position) {
-        if (mediaPlayer != null) {
-            mediaPlayer.seekTo(position);
+        if (media_player != null) {
+            media_player.seekTo(position);
         }
     }
     private void togglePlay() {
@@ -269,9 +311,9 @@ public class Remote_paly_list_activity extends Base_activity {
 
         release();
         try {
-            mediaPlayer = new MediaPlayer();
-            mediaPlayer.setDataSource(path); // 要播放音频的路径
-            mediaPlayer.prepareAsync();    // 异步缓冲
+            media_player = new MediaPlayer();
+            media_player.setDataSource(path); // 要播放音频的路径
+            media_player.prepareAsync();    // 异步缓冲
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -285,11 +327,9 @@ public class Remote_paly_list_activity extends Base_activity {
                 + Utils.formatDuration(duration);
         remote_current_position.setText(text);        // 显示播放进度与总时长
         sb_remote.setProgress(currentPosition);
-
         mHandler.sendEmptyMessageDelayed(TYPE_UPDATE_CURRENT_POSITION, 60);
     }
     private Handler mHandler = new Handler() {
-
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -300,48 +340,50 @@ public class Remote_paly_list_activity extends Base_activity {
         }
     };
     public int getCurrentPosition() {
-        if (mediaPlayer != null) {
-            return mediaPlayer.getCurrentPosition();
+        if (media_player != null) {
+            return media_player.getCurrentPosition();
         }
         return 0;
     }
+
     private void songplay() {
         try {
-            mediaPlayer.reset();
+            media_player.reset();
             String load = songArrayList.get(songIndex);
-            mediaPlayer.setDataSource(load);
-            mediaPlayer.prepare();
-            mediaPlayer.start();
+            media_player.setDataSource(load);
+            media_player.prepare();
+            media_player.start();
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
             T.show_short(Ui_utils.get_string(R.string.error));
+            media_player.stop();
         }
     }
     private void release() {
-        if (mediaPlayer != null) {
-            mediaPlayer.reset();
-            mediaPlayer.release();
-            mediaPlayer = null;
+        if (media_player != null) {
+            media_player.reset();
+            media_player.release();
+            media_player = null;
         }
     }
 
 
     public void start() {
-        if (mediaPlayer != null) {
-            mediaPlayer.start();
+        if (media_player != null) {
+            media_player.start();
         }
     }
     public void pause() {
-        if (mediaPlayer != null) {
-            mediaPlayer.pause();
+        if (media_player != null) {
+            media_player.pause();
 
         }
     }
 
     public boolean isPlaying() {
-        if (mediaPlayer != null) {
-            return mediaPlayer.isPlaying();
+        if (media_player != null) {
+            return media_player.isPlaying();
         }
         return false;
     }
@@ -396,4 +438,13 @@ public class Remote_paly_list_activity extends Base_activity {
         }
         remote_switch_play_mode.setBackgroundResource(btnResBG);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // 解绑服务
+        unbindService(mServiceConnection);
+        release();
+    }
+
 }

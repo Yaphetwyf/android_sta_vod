@@ -2,10 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@drawable/background"
               android:orientation="vertical">
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="40dp"
@@ -49,15 +48,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:gravity="center"
         android:layout_marginTop="40dp"
-        android:orientation="horizontal">
 
+        android:orientation="horizontal">
         <LinearLayout
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:layout_weight="1"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <ImageButton
                 android:id="@+id/btn_refuse"
@@ -70,13 +68,11 @@
                 style="@style/wrap_textview"
                 android:text="@string/refuse"/>
         </LinearLayout>
-
         <LinearLayout
             android:gravity="center_horizontal"
             android:orientation="vertical"
-
-            android:layout_weight="1"
-            android:layout_width="0dp"
+            android:layout_marginLeft="100dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <ImageButton
                 android:id="@+id/btn_answer"
@@ -90,26 +86,6 @@
                 android:textSize="20sp"
                 style="@style/wrap_textview"
                 android:text="@string/answer"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content">
-            <ImageButton
-                android:id="@+id/btn_transfer"
-                style="@style/wrap_button"
-                android:layout_gravity="center_horizontal"
-                android:background="@mipmap/transfer"
-                android:textSize="23sp"/>
-            <TextView
-                android:layout_marginTop="5dp"
-                android:textSize="20sp"
-                style="@style/wrap_textview"
-                android:text="@string/transfer"/>
         </LinearLayout>
 
 

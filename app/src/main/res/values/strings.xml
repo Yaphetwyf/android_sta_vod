@@ -28,11 +28,17 @@
     <string name="log_out">注销</string>
     <string name="operation_state">运行状态 [查看终端及工作站运行时的各种状态]</string>
     <string name="check">查看终端:</string>
+    <string name="terminal">终端</string>
+    <string name="user">用户</string>
     <string name="all_zone">全部分区</string>
     <string name="unzone">未分区</string>
     <string name="open_talkback">开启对讲</string>
     <string name="close_talkback">关闭对讲</string>
     <string name="cancel">取消</string>
+    <string name="talk_over">挂断</string>
+    <string name="open_access">开启门禁</string>
+    <string name="close_access">关闭门禁</string>
+    <string name="propaganda">喊话</string>
     <string name="check_task">查看任务:</string>
     <string name="task">任务</string>
     <string name="state">状态</string>
@@ -100,6 +106,14 @@
     <string name="Saturday">星期六</string>
     <string name="Sunday">星期七</string>
     <string name="add">添加</string>
+    <string name="real_time_talk">实时讲话</string>
+    <string name="task_broadcast_name">任务名称</string>
+    <string name="task_broadcast_state">运行状态</string>
+
+    <string name="new_task">新建</string>
+    <string name="menu">菜单</string>
+    <string name="back">返回</string>
+    <string name="music_loading">歌曲正在下载中</string>
     <string name="error">该播放器不支持这种音频文件类型</string>
     <string name="move_up">上移</string>
     <string name="move_down">下移</string>
@@ -131,7 +145,10 @@
     <string name="edittask">编辑任务列表</string>
     <string name="everyday">每天</string>
     <string name="everyweek">每周</string>
+    <string name="talk_speak_notallow">对讲喊话不能同时进行</string>
     <string name="once">一次</string>
+    <string name="open_speak">开启喊话</string>
+    <string name="close_speak">关闭喊话</string>
     <string name="talking">对讲中</string>
     <string name="playing">播放</string>
     <string name="talk_play">对讲播放</string>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@drawable/background"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    android:orientation="vertical">
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -12,7 +12,7 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
         <TextView
-            android:id="@+id/tv_userid"
+            android:id="@+id/tv_term_userid"
             style="@style/wrap_textview"
             android:text="user_id"
             android:textSize="30sp"/>
@@ -21,8 +21,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <TextView style="@style/wrap_textview"
-                      android:text="@string/inanswer"
-                      android:textSize="23sp"/>
+                android:text="@string/inanswer"
+                android:textSize="23sp"/>
             <ImageView
                 android:id="@+id/iv_dot1"
                 android:layout_width="wrap_content"
@@ -60,7 +60,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content">
             <ImageButton
-                android:id="@+id/btn_refuse"
+                android:id="@+id/btn_term_refuse"
                 style="@style/wrap_button"
                 android:background="@mipmap/hangup"
                 android:textSize="23sp"/>
@@ -79,10 +79,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content">
             <ImageButton
-                android:id="@+id/btn_answer"
+                android:id="@+id/btn_term_answer"
                 style="@style/wrap_button"
                 android:layout_gravity="center_horizontal"
-
                 android:background="@mipmap/answer"
                 android:textSize="23sp"/>
             <TextView
@@ -91,28 +90,6 @@
                 style="@style/wrap_textview"
                 android:text="@string/answer"/>
         </LinearLayout>
-
-        <LinearLayout
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content">
-            <ImageButton
-                android:id="@+id/btn_transfer"
-                style="@style/wrap_button"
-                android:layout_gravity="center_horizontal"
-                android:background="@mipmap/transfer"
-                android:textSize="23sp"/>
-            <TextView
-                android:layout_marginTop="5dp"
-                android:textSize="20sp"
-                style="@style/wrap_textview"
-                android:text="@string/transfer"/>
-        </LinearLayout>
-
-
 
     </LinearLayout>
 

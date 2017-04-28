@@ -10,6 +10,7 @@
     android:layout_height="0dp">
 
 </ListView>
+
     <TextView
         android:id="@+id/tv_remote_current_position"
         android:layout_width="wrap_content"
@@ -36,6 +37,7 @@
         android:layout_width="match_parent"
         android:paddingTop="3dp"
         android:paddingBottom="3dp"
+
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
