@@ -1,13 +1,14 @@
 package com.example.administrator.android_sta_vod.adapter;
 
 import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.example.administrator.android_sta_vod.R;
 import com.example.administrator.android_sta_vod.bean.Mp3;
 import com.example.administrator.android_sta_vod.utils.Ui_utils;
@@ -55,9 +56,8 @@ public class Remote_play_list_adapter extends BaseAdapter {
           convertView= Ui_utils.inflate(R.layout.item_play_list);
           viewHolder=new ViewHolder();
           viewHolder.tv_paly_list= (TextView) convertView.findViewById(R.id.tv_item_play_list);
-          viewHolder.iv_down_over = (ImageView) convertView.findViewById(R.id.iv_down_music_over);
+          viewHolder.npb_domnload= (NumberProgressBar) convertView.findViewById(R.id.npb_down_load);
           viewHolder.ll_select_music= (LinearLayout) convertView.findViewById(R.id.ll_setlect_music);
-
           convertView.setTag(viewHolder);
       }else{
          viewHolder= (ViewHolder) convertView.getTag();
@@ -70,21 +70,23 @@ public class Remote_play_list_adapter extends BaseAdapter {
         }
         /*=================================================================*/
         viewHolder.tv_paly_list.setText(play_list.get(position).getName());
-      if(play_list.get(position).isDownload()){
-          viewHolder.iv_down_over.setVisibility(View.VISIBLE);
-      }
-
-       /* int progress = play_list.get(position).getProgress();
-        viewHolder.pb_music_down.setProgress(play_list.get(position).getProgress());
-        int max_length = play_list.get(position).getMax_length();
-        viewHolder.pb_music_down.setMax(play_list.get(position).getMax_length());*/
-
+       int progress = play_list.get(position).getProgress();
+        int max = play_list.get(position).getMax();
+        Log.d("progress",""+progress);
+        Log.d("max",""+max);
+        viewHolder.npb_domnload.setVisibility(View.GONE);
+        if(play_list.get(position).isDownload()){
+            viewHolder.npb_domnload.setProgress(100);
+        }else {
+            viewHolder.npb_domnload.setProgress(play_list.get(position).getProgress());
+            viewHolder.npb_domnload.setMax(play_list.get(position).getMax());
+        }
         return convertView;
     }
 
     class ViewHolder{
         TextView tv_paly_list;
-       ImageView iv_down_over;
+        NumberProgressBar npb_domnload;
         LinearLayout ll_select_music;
     }
 

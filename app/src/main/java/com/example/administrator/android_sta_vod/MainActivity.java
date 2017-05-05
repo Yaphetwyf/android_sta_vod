@@ -9,8 +9,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.broadcast.android.android_sta_jni.ndk_wrapper;
 import com.example.administrator.android_sta_vod.app.My_application;
@@ -69,7 +69,7 @@ public class MainActivity extends Base_activity {
     private String username;
     private MediaPlayer player;
     private AssetManager assetManager;
-    private FrameLayout fl_off_line;
+    private TextView tv_sta_vod_state;
     private Dialog_term_answer dialog_term_answer;
     @Override
     public int get_layout_res() {
@@ -78,7 +78,7 @@ public class MainActivity extends Base_activity {
 
     @Override
     public void init_view() {
-        fl_off_line = findView(R.id.fl_off_line);
+        tv_sta_vod_state = findView(R.id.tv_sta_vod_state);
         local_ll_ = findView(R.id.main_ll_local);
         about_ll_ = findView(R.id.main_ll_aboutus);
         system_ll_ = findView(R.id.main_ll_system);
@@ -117,11 +117,11 @@ public class MainActivity extends Base_activity {
                 ndk_wrapper.instance().avsz_init(server_address, (short) 1220, username, password);
             }else {
                 T.show_short(Ui_utils.get_string(R.string.net_connect_failure));
-                fl_off_line.setVisibility(View.VISIBLE);
+                tv_sta_vod_state.setText(Ui_utils.get_string(R.string.off_line_one));
             }
         }else{
             T.show_short(Ui_utils.get_string(R.string.please_goto_login));
-            fl_off_line.setVisibility(View.VISIBLE);
+            tv_sta_vod_state.setText(Ui_utils.get_string(R.string.off_line_one));
         }
     }
 
@@ -226,9 +226,9 @@ public class MainActivity extends Base_activity {
             }
         }
         if ("close".equals(key) || "timeout".equals(key) || "finished".equals(key)) {
-           fl_off_line.setVisibility(View.VISIBLE);
+            tv_sta_vod_state.setText(Ui_utils.get_string(R.string.off_line_one));
         }else{
-            fl_off_line.setVisibility(View.GONE);
+            tv_sta_vod_state.setText(Ui_utils.get_string(R.string.on_line_one));
         }
         if (null != users) {
             if ("usr_offline".equals(type)) {
@@ -399,7 +399,9 @@ public class MainActivity extends Base_activity {
     @Override
     protected void onPause() {
         super.onPause();
+
     }
+
     private long firstTime = 0;
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {

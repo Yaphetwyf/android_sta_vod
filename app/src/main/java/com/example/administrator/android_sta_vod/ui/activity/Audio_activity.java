@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
@@ -142,6 +143,7 @@ public class Audio_activity extends Base_activity {
                 // 显示列表
                 mAdapter = new Audio_adapter(getApplicationContext(), cursor);
                 listView.setAdapter(mAdapter);
+                mAdapter.notifyDataSetChanged();
             }
         };
 
@@ -163,5 +165,12 @@ public class Audio_activity extends Base_activity {
         // 发起异步查询（在子线程中查询）
         queryHandler.startQuery(token, cookie, uri,
                 projection, selection, selectionArgs ,orderBy);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+
     }
 }

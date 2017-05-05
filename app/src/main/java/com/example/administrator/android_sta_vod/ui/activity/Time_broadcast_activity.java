@@ -30,6 +30,7 @@ public class Time_broadcast_activity extends Base_activity {
     private Time_broadcast_adapter broadcast_adapter;
     private ListView lv_broadcast_task;
     private List<Task> tasks1;
+    private Tasks tasks;
 
     private int item_id=-1;
     @Override
@@ -74,8 +75,6 @@ public class Time_broadcast_activity extends Base_activity {
                     String id = tasks1.get(item_id).getId();
                     ndk_wrapper.instance().avsz_task_start(Integer.valueOf(id));
                 }
-
-
                 break;
             case R.id.ib_hand_stop:
                 if (-1 == item_id) {
@@ -92,7 +91,6 @@ public class Time_broadcast_activity extends Base_activity {
                 ndk_wrapper.instance().avsz_task_stop(Integer.valueOf(id1));
                 break;
         }
-
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void eventBusOnMainThread(Avsz_info_event msg) {
@@ -125,6 +123,7 @@ public class Time_broadcast_activity extends Base_activity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void eventBusOnMainThread(Tasks tasks) {
         tasks1 = tasks.getTasks();
+        Log.d("tasks1111",tasks1+"");
         broadcast_adapter = new Time_broadcast_adapter(tasks1);
         lv_broadcast_task.setAdapter(broadcast_adapter);
 
@@ -134,7 +133,9 @@ public class Time_broadcast_activity extends Base_activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Beacon_util.login();
-        EventBus.getDefault().register(this);
+
+            EventBus.getDefault().register(this);
+
     }
 
     @Override

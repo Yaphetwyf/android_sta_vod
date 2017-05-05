@@ -22,4 +22,5 @@
         android:layout_below="@+id/iv_real_time"
         android:layout_centerHorizontal="true"
         android:id="@+id/tv_real_time_start" />
+
 </RelativeLayout>

@@ -141,6 +141,7 @@ public class ndk_wrapper {
                     EventBus.getDefault().post(root);
                     String text = XmlUtils.toXml(root);
                     Log.d("texttext", text);
+
                     if(null != root.getAreas()){
                         EventBus.getDefault().post(root.getAreas());
                     }

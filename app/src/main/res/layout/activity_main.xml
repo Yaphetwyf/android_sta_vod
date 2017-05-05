@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:background="@drawable/background"
     tools:context="com.example.administrator.android_sta_vod.MainActivity">
-
+<!--
 <FrameLayout
     android:id="@+id/fl_off_line"
     android:visibility="gone"
@@ -21,14 +21,22 @@
         android:textColor="#000"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-</FrameLayout>
+</FrameLayout>-->
     <ImageView
         android:layout_marginTop="20dp"
         android:layout_gravity="center_horizontal"
         android:src="@drawable/model"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
-
+    <TextView
+        android:layout_marginTop="3dp"
+        android:id="@+id/tv_sta_vod_state"
+        android:text="@string/on_line_one"
+        android:layout_gravity="center"
+        android:textSize="17sp"
+        android:textColor="@color/black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
     <LinearLayout
         android:orientation="vertical"
         android:layout_marginTop="30dp"

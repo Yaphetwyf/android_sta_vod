@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
     android:id="@+id/ll_setlect_music"
     android:layout_height="match_parent">
 <TextView
@@ -8,23 +9,14 @@
     android:textSize="30dp"
     android:textColor="#000"
     android:padding="8dp"
-    android:layout_width="0dp"
+    android:layout_width="match_parent"
     android:text="xxx"
-    android:layout_weight="9"
     android:layout_height="wrap_content" />
-   <ImageView
-android:id="@+id/iv_down_music_over"
-       android:layout_weight="1"
-       android:layout_width="0dp"
-       android:visibility="gone"
-       android:src="@drawable/pause"
-       android:layout_height="30dp" />
-    <!--<ProgressBar
-        android:id="@+id/progressBar_horizontal"
-        style="?android:attr/progressBarStyleHorizontal"
+    <com.daimajia.numberprogressbar.NumberProgressBar
+        android:id="@+id/npb_down_load"
+        custom:progress_current="0"
+        android:padding="10dp"
+        style="@style/NumberProgressBar_Relax_Blue"
         android:layout_width="match_parent"
-        android:progress="20"
-        android:max="100"
-        android:layout_height="15dp"
-       />-->
+        android:layout_height="wrap_content"/>
 </LinearLayout>

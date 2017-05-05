@@ -1,7 +1,9 @@
-package com.example.administrator.android_sta_vod.ui.activity.fragment;
+package com.example.administrator.android_sta_vod.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ExpandableListView;
@@ -22,19 +24,17 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 
 /**
- * Created by Administrator on 2017/4/26.
+ * Created by Administrator on 2017/5/2.
  */
 
-public class Terminal_fragment extends BaseFragment{
-    private String tag = "REAL_TIME_FRAGMENT";
+public class Add_terminal_activity extends Base_activity {
     private ExpandableListView elv_terminal_list;
-    private Terminal_expandlist_adapter expandlist_adapter;
+    private Button btn_sure_term;
     private Areas areas;
     private Terms terms;
     private ArrayList<Term> term_list;
     private ArrayList<ArrayList<Term>> terms_list;
-    private Button btn_sure_term;
-
+    private Terminal_expandlist_adapter expandlist_adapter;
     @Override
     public int get_layout_res() {
         return R.layout.fragment_terminal;
@@ -51,20 +51,22 @@ public class Terminal_fragment extends BaseFragment{
         btn_sure_term.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                Real_time_talk_fragment real_time_talk_fragment=new Real_time_talk_fragment();
                 ArrayList<Term> terms = expandlist_adapter.get_terms();
-                Bundle terms_bundle=new Bundle();
-                terms_bundle.putSerializable("terms",terms);
-                real_time_talk_fragment.setArguments(terms_bundle);
+                Intent intent=new Intent();
+                intent.setClass(getApplicationContext(),Real_time_activity.class);
+                Bundle confirm_bundle = new Bundle();
+                confirm_bundle.putParcelableArrayList("terms", terms);
+                intent.putExtras(confirm_bundle);
+                startActivity(intent);
+                finish();
             }
         });
     }
+
     @Override
     public void init_data() {
         areas = Net_data.instance().get_areas();
         terms = Net_data.instance().get_terms();
-
         if (null != areas.getAreas())
         {
             init_goal_data();
@@ -73,7 +75,6 @@ public class Terminal_fragment extends BaseFragment{
             return;
         }
         elv_terminal_list.setAdapter(expandlist_adapter);
-
     }
 
     @Override
@@ -131,5 +132,17 @@ public class Terminal_fragment extends BaseFragment{
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+           Intent intent=new Intent(getApplicationContext(),Real_time_activity.class);
+            startActivity(intent);
+            finish();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+
     }
 }

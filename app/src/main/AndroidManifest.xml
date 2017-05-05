@@ -29,20 +29,43 @@
 
 
         android:theme="@style/AppTheme">
-        <activity android:name="com.example.administrator.android_sta_vod.MainActivity"/>
-        <activity android:name="com.example.administrator.android_sta_vod.ui.activity.About_us_activity"/>
-        <activity android:name="com.example.administrator.android_sta_vod.ui.activity.System_activity"/>
-        <activity android:name="com.example.administrator.android_sta_vod.ui.activity.Call_back_activity"/>
+        <activity android:name="com.example.administrator.android_sta_vod.MainActivity"
+            android:configChanges="orientation|screenSize"
+            />
+        <activity android:name="com.example.administrator.android_sta_vod.ui.activity.About_us_activity"
+            android:configChanges="orientation|screenSize"
+            />
+        <activity android:name="com.example.administrator.android_sta_vod.ui.activity.System_activity"
+            android:configChanges="orientation|screenSize"
+            />
+        <activity android:name="com.example.administrator.android_sta_vod.ui.activity.Call_back_activity"
+            android:configChanges="orientation|screenSize"
+            />
         <activity android:name="com.example.administrator.android_sta_vod.ui.activity.User_talk_activity"
             android:configChanges="orientation|screenSize"/>
         <activity android:name="com.example.administrator.android_sta_vod.ui.activity.Remote_play_activity"
             android:configChanges="orientation|screenSize"/>
-        <activity android:name="com.example.administrator.android_sta_vod.ui.activity.Remote_paly_list_activity"/>
-        <activity android:name="com.example.administrator.android_sta_vod.ui.activity.Video_play_activity"/>
-        <activity android:name="com.example.administrator.android_sta_vod.ui.activity.Real_time_activity"/>
-        <activity android:name="com.example.administrator.android_sta_vod.ui.activity.Audio_activity"/>
-        <activity android:name="com.example.administrator.android_sta_vod.ui.activity.Audio_play_activity"/>
-        <activity android:name="com.example.administrator.android_sta_vod.ui.activity.Time_broadcast_activity"/>
+        <activity android:name="com.example.administrator.android_sta_vod.ui.activity.Remote_paly_list_activity"
+            android:configChanges="orientation|screenSize"
+            />
+        <activity android:name="com.example.administrator.android_sta_vod.ui.activity.Video_play_activity"
+            android:configChanges="orientation|screenSize"
+            />
+        <activity android:name="com.example.administrator.android_sta_vod.ui.activity.Real_time_activity"
+            android:configChanges="orientation|screenSize"
+            />
+        <activity android:name="com.example.administrator.android_sta_vod.ui.activity.Audio_activity"
+            android:configChanges="orientation|screenSize"
+            />
+        <activity android:name="com.example.administrator.android_sta_vod.ui.activity.Audio_play_activity"
+            android:configChanges="orientation|screenSize"
+            />
+        <activity android:name="com.example.administrator.android_sta_vod.ui.activity.Add_terminal_activity"
+            android:configChanges="orientation|screenSize"
+            />
+        <activity android:name="com.example.administrator.android_sta_vod.ui.activity.Time_broadcast_activity"
+            android:configChanges="orientation|screenSize"
+            />
         <activity android:name="com.example.administrator.android_sta_vod.ui.activity.Talk_back_activity"
             android:configChanges="orientation|screenSize"
             />
@@ -53,7 +76,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-</activity>
+        </activity>
         <service android:name="com.example.administrator.android_sta_vod.service.Audioplay_service"/>
     </application>
 

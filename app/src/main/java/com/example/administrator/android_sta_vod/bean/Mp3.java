@@ -2,7 +2,8 @@ package com.example.administrator.android_sta_vod.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.widget.ProgressBar;
+
+import com.daimajia.numberprogressbar.NumberProgressBar;
 
 /**
  * Created by AVSZ on 2017/1/10.
@@ -12,26 +13,36 @@ public class Mp3 implements Parcelable{
     private String path;
     private String name;
     private String length;
-    private ProgressBar progressBar;
-
-    public int getMax_length() {
-        return max_length;
-    }
-
-    public void setMax_length(int max_length) {
-        this.max_length = max_length;
-    }
-
-    private int max_length;
-    public boolean isDownload() {
-        return isDownload;
-    }
-
-    public void setDownload(boolean download) {
-        isDownload = download;
-    }
-
+    private NumberProgressBar numberProgressBar;
     private boolean isDownload;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    private int id;
+    public long getFile_size() {
+        return file_size;
+    }
+
+    public void setFile_size(long file_size) {
+        this.file_size = file_size;
+    }
+
+    public int getData_length() {
+        return data_length;
+    }
+
+    public void setData_length(int data_length) {
+        this.data_length = data_length;
+    }
+
+    private long file_size;
+    public int data_length;
 
     public int getProgress() {
         return progress;
@@ -41,24 +52,36 @@ public class Mp3 implements Parcelable{
         this.progress = progress;
     }
 
+    public int getMax() {
+        return max;
+    }
+
+    public void setMax(int max) {
+        this.max = max;
+    }
+
+    private int max;
     private int progress;
-    public void setProgressBar(ProgressBar progressBar) {
-        this.progressBar = progressBar;
+    public boolean isDownload() {
+        return isDownload;
+    }
+    public void setDownload(boolean download) {
+        isDownload = download;
     }
 
-    public ProgressBar getProgressBar() {
-        return progressBar;
+    public NumberProgressBar getNumberProgressBar() {
+        return numberProgressBar;
     }
-
-
-
+    public void setNumberProgressBar(NumberProgressBar numberProgressBar) {
+        this.numberProgressBar = numberProgressBar;
+    }
     public Mp3(){
-
     }
     public Mp3(String path, String name, String length){
         this.path = path;
         this.name = name;
         this.length = length;
+
     }
 
     protected Mp3(Parcel in)

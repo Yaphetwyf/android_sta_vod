@@ -20,6 +20,9 @@ public class Welcome_activity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+
         setTheme(android.R.style.Theme_Black_NoTitleBar);
         requestWindowFeature(Window.FEATURE_NO_TITLE);//去掉标题栏
         //隐藏标题栏以及状态栏

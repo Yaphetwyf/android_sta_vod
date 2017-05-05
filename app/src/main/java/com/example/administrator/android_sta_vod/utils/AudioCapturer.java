@@ -107,7 +107,7 @@ public class AudioCapturer {
         }
 
         mAudioRecord.release();
-//        mAudioRecord = null;
+        mAudioRecord = null;
         mIsCaptureStarted = false;
         mAudioFrameCapturedListener = null;
 
@@ -133,11 +133,11 @@ public class AudioCapturer {
                     else if (ret == AudioRecord.ERROR_INVALID_OPERATION) {
                         //Log.e(TAG , "Error ERROR_INVALID_OPERATION");
                     }
-                    else {
-                        if (mAudioFrameCapturedListener != null) {
+                    else if(mAudioFrameCapturedListener != null){
+
                             Log.d(TAG , "OK, Captured "+ret+" bytes !");
+
                             mAudioFrameCapturedListener.onAudioFrameCaptured(buffer);
-                        }
 //                        Log.d(TAG , "OK, Captured "+ret+" bytes !");
                     }
                 }

@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/android_sta_vod.iml" filepath="$PROJECT_DIR$/android_sta_vod.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/numberprogressbar/numberprogressbar.iml" filepath="$PROJECT_DIR$/numberprogressbar/numberprogressbar.iml" />
     </modules>
   </component>
 </project>

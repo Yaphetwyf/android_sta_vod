@@ -72,10 +72,12 @@ public class Time_broadcast_adapter extends BaseAdapter {
         viewHolder.tv_task_name.setText(tasks.get(position).getName());
         String status = tasks.get(position).getStatus();
 
-        if(tasks.get(position).getStatus().equals("0")){
-            viewHolder.tv_task_state.setText(Ui_utils.get_string(R.string.nrun));
-        }else {
+        if(tasks.get(position).getStatus().equals("2")){
             viewHolder.tv_task_state.setText(Ui_utils.get_string(R.string.hand));
+        }else if(tasks.get(position).getStatus().equals("1")){
+            viewHolder.tv_task_state.setText(Ui_utils.get_string(R.string.auto));
+        }else {
+            viewHolder.tv_task_state.setText(Ui_utils.get_string(R.string.nrun));
         }
 
         return convertView;

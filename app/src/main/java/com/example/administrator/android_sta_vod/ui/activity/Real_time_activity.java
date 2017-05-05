@@ -14,8 +14,7 @@ import com.example.administrator.android_sta_vod.adapter.Find_tab_Adapter;
 import com.example.administrator.android_sta_vod.app.Net_data;
 import com.example.administrator.android_sta_vod.base.Global;
 import com.example.administrator.android_sta_vod.ui.activity.fragment.Real_time_talk_fragment;
-import com.example.administrator.android_sta_vod.ui.activity.fragment.Terminal_fragment;
-import com.example.administrator.android_sta_vod.utils.Beacon_util;
+import com.example.administrator.android_sta_vod.ui.activity.fragment.Terminal_two_fragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,11 +64,9 @@ public class Real_time_activity extends Base_activity {
 
     private void initViewPager() {
         viewPager = findView(R.id.view_pager);
-
         List<Fragment> fragments = new ArrayList<>();
         fragments.add(new Real_time_talk_fragment());
-        fragments.add(new Terminal_fragment());
-
+        fragments.add(new Terminal_two_fragment());
         PagerAdapter mAdapter = new Find_tab_Adapter(getSupportFragmentManager(), fragments);
         viewPager.setAdapter(mAdapter);
     }
@@ -131,22 +128,18 @@ public class Real_time_activity extends Base_activity {
     @Override
     public void onClick(View v, int btnId) {
         switch (btnId) {
-            case R.id.tv_video:             // 视频
+            case R.id.tv_video:
                 // onTabSelected(0);
                 viewPager.setCurrentItem(0);
                 break;
-            case R.id.tv_audio:             // 音频
+            case R.id.tv_audio:
                 // onTabSelected(1);
                 viewPager.setCurrentItem(1);
                 break;
         }
     }
 
-    /**
-     * 选项切换了, 改变选项卡的显示状态
-     *
-     * @param position 选中的选项卡的位置
-     */
+
     private void onTabSelected(int position) {
         // 上一次选中的选项卡要取消高亮
         mCurrentTab.setSelected(false);         // 取消高亮，会根据selected状态选择显示
@@ -164,7 +157,6 @@ public class Real_time_activity extends Base_activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Beacon_util.login();
         Net_data.instance();
     }
 }
