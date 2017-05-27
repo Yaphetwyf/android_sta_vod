@@ -4,9 +4,13 @@ package com.example.administrator.android_sta_vod.app;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 
+import com.afa.tourism.greendao.gen.DaoMaster;
+import com.afa.tourism.greendao.gen.DaoSession;
 import com.example.administrator.android_sta_vod.base.Global;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -16,13 +20,19 @@ import java.util.List;
 public class My_application extends Application {
     public List<Activity> mList = new LinkedList<Activity>();
     public static My_application instance;
-
+    private DaoMaster.DevOpenHelper mHelper;
+    private SQLiteDatabase db;
+    private DaoMaster mDaoMaster;
+    private DaoSession mDaoSession;
     public My_application() {
     }
     public synchronized static My_application getInstance() {
         if (null == instance) {
             instance = new My_application();
         }
+        return instance;
+    }
+    public static My_application getMy_application(){
         return instance;
     }
     // add Activity
@@ -74,11 +84,32 @@ public class My_application extends Application {
         //主线程id,等同于mainThead.getId();作用
         main_thread_id_ = android.os.Process.myTid();
        // refWatcher = LeakCanary.install(this);
+        CrashReport.initCrashReport(getApplicationContext(), "8e81059aec", true);
         super.onCreate();
         Global.init(this);
+
+        setDatabase();
         Net_data.instance();
+
     }
 
+    private void setDatabase() {
+        // 通过DaoMaster 的内部类 DevOpenHelper，你可以得到一个便利的SQLiteOpenHelper 对象。
+        // 可能你已经注意到了，你并不需要去编写「CREATE TABLE」这样的 SQL 语句，因为greenDAO 已经帮你做了。
+        // 注意：默认的DaoMaster.DevOpenHelper 会在数据库升级时，删除所有的表，意味着这将导致数据的丢失。
+        // 所以，在正式的项目中，你还应该做一层封装，来实现数据库的安全升级。
+        mHelper = new DaoMaster.DevOpenHelper(this,"notes.db", null);
+        db =mHelper.getWritableDatabase();
+        // 注意：该数据库连接属于DaoMaster，所以多个 Session 指的是相同的数据库连接。
+        mDaoMaster = new DaoMaster(db);
+        mDaoSession = mDaoMaster.newSession();
+    }
+    public DaoSession getDaoSession() {
+        return mDaoSession;
+    }
+    public SQLiteDatabase getDb() {
+        return db;
+    }
     public static Handler get_handler() {
         return handler_;
     }

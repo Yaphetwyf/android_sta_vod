@@ -45,10 +45,10 @@ public class File_utils {
         try {
             createSDDir(path);
             file  = new File(SD_PATH +path+"/"+ fileName);
-                file.createNewFile();
-                output = new FileOutputStream(file,true);
-                output.write(buf,0,buf.length);
-                //清掉缓存
+            file.createNewFile();
+            output = new FileOutputStream(file,true);
+            output.write(buf,0,buf.length);
+            //清掉缓存
                 output.flush();
         } catch (Exception e) {
             Log.e("write2SDFromInput", e.getMessage());

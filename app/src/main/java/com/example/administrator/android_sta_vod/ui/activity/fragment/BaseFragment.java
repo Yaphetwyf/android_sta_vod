@@ -24,6 +24,7 @@ public abstract class BaseFragment extends Fragment implements IUIOperation {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActivity = (Base_activity) getActivity();
+
     }
 
     @Nullable

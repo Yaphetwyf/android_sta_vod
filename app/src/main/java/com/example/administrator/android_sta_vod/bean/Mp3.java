@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
 
+import java.util.List;
+
 /**
  * Created by AVSZ on 2017/1/10.
  */
@@ -16,6 +18,16 @@ public class Mp3 implements Parcelable{
     private NumberProgressBar numberProgressBar;
     private boolean isDownload;
 
+
+    public List<IdBean> getIdBean() {
+        return idBean;
+    }
+
+    public void setIdBean(List<IdBean> idBean) {
+        this.idBean = idBean;
+    }
+
+    private List<IdBean> idBean;
     public int getId() {
         return id;
     }

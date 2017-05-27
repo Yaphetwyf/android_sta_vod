@@ -6,73 +6,79 @@ import android.os.Parcelable;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
+import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
+
 /**
- * Created by AVSZ on 2016/12/26.
+ * Created by Administrator on 2017/5/11.
  */
+@Entity
 @XStreamAlias("term")
-public class Term implements Parcelable {
-    @XStreamAsAttribute()
-    @XStreamAlias("name")
-    private String name;
+public class Term implements Parcelable{
     @XStreamAsAttribute()
     @XStreamAlias("id")
     private String id;
+    @XStreamAsAttribute()
+    @XStreamAlias("name")
+    private String name;
     @XStreamAsAttribute()
     @XStreamAlias("pid")
     private String pid;
     @XStreamAsAttribute()
     @XStreamAlias("status")
     private String status;
-
-    public Term(){
-
+    public String getStatus() {
+        return this.status;
+    }
+    public void setStatus(String status) {
+        this.status = status;
+    }
+    public String getPid() {
+        return this.pid;
+    }
+    public void setPid(String pid) {
+        this.pid = pid;
+    }
+    public String getId() {
+        return this.id;
+    }
+    public void setId(String id) {
+        this.id = id;
+    }
+    public String getName() {
+        return this.name;
+    }
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Term(String name,String id,String pid,String status){
-        this.name = name;
+    public boolean isSpeaking() {
+        return isSpeaking;
+    }
+
+    public void setSpeaking(boolean speaking) {
+        isSpeaking = speaking;
+    }
+
+    private boolean isSpeaking;
+    @Generated(hash = 1021206145)
+    public Term(String id, String name, String pid, String status) {
         this.id = id;
+        this.name = name;
         this.pid = pid;
         this.status = status;
     }
     protected Term(Parcel in)
     {
-        name = in.readString();
         id = in.readString();
+        name = in.readString();
+
         pid = in.readString();
         status=in.readString();
     }
-    public String getName() {
-        return name;
+    @Generated(hash = 142182234)
+    public Term() {
     }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getPid() {
-        return pid;
-    }
-
-    public void setPid(String pid) {
-        this.pid = pid;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     @Override
     public String toString() {
         return "Term{" +
@@ -102,8 +108,8 @@ public class Term implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(name);
         dest.writeString(id);
+        dest.writeString(name);
         dest.writeString(pid);
         dest.writeString(status);
     }

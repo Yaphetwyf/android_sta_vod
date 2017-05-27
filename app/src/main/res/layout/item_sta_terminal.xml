@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:background="#ECECEC"
+    android:id="@+id/ll_terminal_list"
+    android:layout_height="match_parent">
+  <TextView
+      android:text="@string/add_ring_task"
+      android:id="@+id/tv_sta_vod_list"
+      android:layout_width="0dp"
+      android:layout_weight="4"
+      android:gravity="center_horizontal"
+      android:textColor="@color/black"
+      android:textSize="23sp"
+
+      android:layout_height="wrap_content" />
+  <Button
+      android:id="@+id/btn_delete_termianl"
+      android:layout_weight="1"
+      android:padding="5dp"
+      android:text="@string/delete"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content" />
+</LinearLayout>

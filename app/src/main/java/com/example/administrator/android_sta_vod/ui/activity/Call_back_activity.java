@@ -35,12 +35,9 @@ import java.util.List;
  */
 public class Call_back_activity extends Base_activity {
     private GridView grid_call_view;
-
-
     private String tag = "USERS_FRAGMENT";
     private static final int request_code = 106;
     private Dialog_calluser dialog_calluser;
-
     public static final String ON_LINE="1";//在线
     public static final String OFF_LINE="0";//离线
     public static final String PLAY="2";//播放
@@ -116,7 +113,7 @@ public class Call_back_activity extends Base_activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-      EventBus.getDefault().register(this);
+//      EventBus.getDefault().register(this);
         Beacon_util.login();
     }
 
@@ -126,11 +123,8 @@ public class Call_back_activity extends Base_activity {
         EventBus.getDefault().unregister(this);
 
     }
-
-
-
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
         if (null != player) {
             if (player.isPlaying()) {
@@ -142,8 +136,6 @@ public class Call_back_activity extends Base_activity {
         }
     }
 
-
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -151,9 +143,7 @@ public class Call_back_activity extends Base_activity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(Users users) {
         userList = users.getUsers();
-
         user_list_adapter = new User_list_adapter(userList);
-
         grid_call_view.setAdapter(user_list_adapter);
     }
 
@@ -202,9 +192,7 @@ public class Call_back_activity extends Base_activity {
         }
         if (null != userList) {
             if ("usr_offline".equals(type)) {
-
                 for (int i = 0; i < userList.size(); i++) {
-
                     if (key.equals(userList.get(i).getName())) {
                         userList.get(i).setStatus("0");
                         Log.d(tag, "usr_offline" + userList.get(i).getName());
@@ -221,7 +209,6 @@ public class Call_back_activity extends Base_activity {
                         user_list_adapter.notifyDataSetChanged();
                     }
                 }
-
             }
             if ("close".equals(key) ) {
                 tv_title.setText(R.string.off_line);
@@ -322,4 +309,3 @@ public class Call_back_activity extends Base_activity {
 
     }
 }
-

@@ -31,6 +31,7 @@ import java.util.List;
  * Created by Administrator on 2017/4/17 0017.
  */
 public class Video_play_activity extends Base_activity{
+
     private final static int requestCode = 105;
 
     private GridView vedio_gridview;
@@ -181,7 +182,7 @@ public class Video_play_activity extends Base_activity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
+//        EventBus.getDefault().register(this);
         Beacon_util.login();
     }
     @Override
@@ -217,5 +218,14 @@ public class Video_play_activity extends Base_activity{
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(dialog_term_answer!=null){
+            dialog_term_answer.dismiss();
+            dialog_term_answer=null;
+        }
     }
 }

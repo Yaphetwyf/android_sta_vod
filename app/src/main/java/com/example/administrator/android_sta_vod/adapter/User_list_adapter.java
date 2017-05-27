@@ -8,11 +8,9 @@ import android.widget.TextView;
 
 import com.example.administrator.android_sta_vod.R;
 import com.example.administrator.android_sta_vod.bean.User;
-import com.example.administrator.android_sta_vod.ui.activity.Call_back_activity;
 import com.example.administrator.android_sta_vod.utils.Ui_utils;
 
 import java.util.List;
-import java.util.zip.Inflater;
 
 /**
  * Created by Administrator on 2017/3/29 0029.
@@ -53,12 +51,13 @@ public class User_list_adapter extends BaseAdapter {
             viewHolder=new ViewHolder();
             viewHolder.name = (TextView) convertView.findViewById(R.id.name_item);
             viewHolder.image = (ImageView) convertView.findViewById(R.id.image_item);
+            viewHolder.nick_name= (TextView) convertView.findViewById(R.id.nick_name_item);
             convertView.setTag(viewHolder);
         }else{
-
             viewHolder = (ViewHolder) convertView.getTag();
         }
         viewHolder.name.setText(userList.get(position).getName());
+        viewHolder.nick_name.setText("( "+userList.get(position).getNick_name()+" )");
         if(userList.get(position).getStatus().equals("1")){
             viewHolder.image.setImageResource(R.drawable.user_on_line);
         }else{
@@ -72,5 +71,6 @@ class ViewHolder
 {
     public TextView name;
     public ImageView image;
+    public TextView nick_name;
 }
 }

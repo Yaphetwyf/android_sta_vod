@@ -14,9 +14,7 @@ import android.widget.ImageButton;
 import com.example.administrator.android_sta_vod.base.Const;
 
 
-/**
- * Created by Administrator on 2016/12/5.
- */
+
 public class Utils {
 
     /**

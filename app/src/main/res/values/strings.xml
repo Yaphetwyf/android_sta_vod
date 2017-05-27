@@ -1,10 +1,17 @@
 <resources>
     <string name="app_name">峰火科技</string>
 
+    <string name="local_play">本地点播</string>
+    <string name="remote_play">远程点播</string>
+    <string name="video_play">视频点播</string>
+    <string name="about_us">关于我们</string>
+    <string name="call_back">呼叫对讲</string>
+    <string name="time_broadcast">定时广播</string>
+    <string name="real_time">实时采播</string>
+    <string name="system_set">系统设置</string>
     <string name="terminationstate">终端状态</string>
     <string name="userstate">呼叫主机</string>
     <string name="timing">定时节目</string>
-    <string name="real_time">实时采播</string>
     <string name="manage">节目管理</string>
     <string name="exit_call">退出\n呼叫主机</string>
     <string name="video">通话录像</string>
@@ -41,6 +48,7 @@
     <string name="propaganda">喊话</string>
     <string name="check_task">查看任务:</string>
     <string name="task">任务</string>
+    <string name="choose_terminal">选择终端</string>
     <string name="state">状态</string>
     <string name="working_time">运行时间</string>
     <string name="timing_type">定时类型</string>

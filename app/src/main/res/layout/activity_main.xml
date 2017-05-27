@@ -8,20 +8,7 @@
     android:orientation="vertical"
     android:background="@drawable/background"
     tools:context="com.example.administrator.android_sta_vod.MainActivity">
-<!--
-<FrameLayout
-    android:id="@+id/fl_off_line"
-    android:visibility="gone"
-    android:layout_width="match_parent"
-    android:background="#C90000"
-    android:layout_height="35dp">
-    <TextView
-        android:gravity="center"
-        android:text="离线中...."
-        android:textColor="#000"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-</FrameLayout>-->
+
     <ImageView
         android:layout_marginTop="20dp"
         android:layout_gravity="center_horizontal"
@@ -31,7 +18,7 @@
     <TextView
         android:layout_marginTop="3dp"
         android:id="@+id/tv_sta_vod_state"
-        android:text="@string/on_line_one"
+        android:text=""
         android:layout_gravity="center"
         android:textSize="17sp"
         android:textColor="@color/black"
@@ -72,7 +59,7 @@
                 android:textColor="#000"
                 android:textStyle="bold"
                 android:layout_gravity="center_horizontal"
-                android:text="本地点播"/>
+                android:text="@string/local_play"/>
         </LinearLayout>
         <LinearLayout
             android:id="@+id/main_ll_remote"
@@ -92,7 +79,7 @@
                 android:textColor="#000"
                 android:textStyle="bold"
                 android:layout_gravity="center_horizontal"
-                android:text="远程点播"/>
+                android:text="@string/remote_play"/>
         </LinearLayout>
         <LinearLayout
             android:id="@+id/main_ll_videoplay"
@@ -112,7 +99,7 @@
                 android:textStyle="bold"
                 android:textColor="#000"
                 android:layout_gravity="center_horizontal"
-                android:text="视频点播"/>
+                android:text="@string/video_play"/>
         </LinearLayout>
         <LinearLayout
             android:id="@+id/main_ll_aboutus"
@@ -132,7 +119,7 @@
                 android:textColor="#000"
                 android:textStyle="bold"
                 android:layout_gravity="center_horizontal"
-                android:text="关于我们"/>
+                android:text="@string/about_us"/>
         </LinearLayout>
     </LinearLayout>
     <LinearLayout
@@ -162,7 +149,7 @@ android:gravity="center"
                 android:textColor="#000"
                 android:textStyle="bold"
                 android:layout_gravity="center_horizontal"
-                android:text="呼叫对讲"/>
+                android:text="@string/call_back"/>
         </LinearLayout>
         <LinearLayout
             android:id="@+id/main_ll_broadercast"
@@ -182,7 +169,7 @@ android:gravity="center"
                 android:textColor="#000"
                 android:textStyle="bold"
                 android:layout_gravity="center_horizontal"
-                android:text="定时广播"/>
+                android:text="@string/time_broadcast"/>
         </LinearLayout>
         <LinearLayout
             android:id="@+id/main_ll_real_time"
@@ -202,7 +189,7 @@ android:gravity="center"
                 android:textColor="#000"
                 android:textStyle="bold"
                 android:layout_gravity="center_horizontal"
-                android:text="实时采播"/>
+                android:text="@string/real_time"/>
         </LinearLayout>
         <LinearLayout
             android:id="@+id/main_ll_system"
@@ -222,15 +209,15 @@ android:gravity="center"
                 android:textStyle="bold"
                 android:textColor="#000"
                 android:layout_gravity="center_horizontal"
-                android:text="系统设置"/>
+                android:text="@string/system_set"/>
         </LinearLayout>
     </LinearLayout>
 
         <ImageView
             android:layout_weight="2"
-android:layout_marginBottom="18dp"
-android:layout_alignParentBottom="true"
-android:layout_centerHorizontal="true"
+            android:layout_marginBottom="18dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
             android:src="@drawable/name"
             android:layout_gravity="center"
             android:layout_width="wrap_content"

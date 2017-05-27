@@ -111,13 +111,13 @@ public class Terminal_fragment extends BaseFragment{
                 {
                     terms.setTerms(new ArrayList<>());
                 }
-                for (Term term : terms.getTerms())
+             /*   for (Term term : terms.getTerms())
                 {
                     if (term.getPid().equals(area.getId()))
                     {
                         term_list.add(term);
                     }
-                }
+                }*/
             }
             terms_list.add(term_list);
         }

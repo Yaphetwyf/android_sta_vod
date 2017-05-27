@@ -60,33 +60,36 @@ public class Audioplay_service extends Service implements I_audio_play {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // 接收点击通知后传过来的what参数
-        int what = intent.getIntExtra("what", -1);
+        if(intent!=null){
+            int what = intent.getIntExtra("what", -1);
 
-        switch (what) {
-            case NOTIFICATION_ROOT:     // 点击通知的根节点进入Activity，然后再启动服务，进入到此方法
-                openThemSameAudio = true;
-                break;
-            case NOTIFICATION_PREV:     // 点击通知上一首启动服务进入此方法
-                prev();
-                break;
-            case NOTIFICATION_NEXT:     // 点击通知下一首启动服务进入此方法
-                next();
-                break;
-
-            default:                    // 从主界面点击进来，没有带what参数
-                int temp_position_ = intent.getIntExtra(Const.KEY_POSITION, -1);
-                if (temp_position_ == position) {  // 表示打开的是同一首歌
+            switch (what) {
+                case NOTIFICATION_ROOT:     // 点击通知的根节点进入Activity，然后再启动服务，进入到此方法
                     openThemSameAudio = true;
-                } else {
-                    openThemSameAudio = false;
-                }
+                    break;
+                case NOTIFICATION_PREV:     // 点击通知上一首启动服务进入此方法
+                    prev();
+                    break;
+                case NOTIFICATION_NEXT:     // 点击通知下一首启动服务进入此方法
+                    next();
+                    break;
 
-                audioDatas = (ArrayList<AudioBean>)
-                        intent.getSerializableExtra(Const.KEY_DATA);
+                default:                    // 从主界面点击进来，没有带what参数
+                    int temp_position_ = intent.getIntExtra(Const.KEY_POSITION, -1);
+                    if (temp_position_ == position) {  // 表示打开的是同一首歌
+                        openThemSameAudio = true;
+                    } else {
+                        openThemSameAudio = false;
+                    }
 
-                position = temp_position_;
-                break;
+                    audioDatas = (ArrayList<AudioBean>)
+                            intent.getSerializableExtra(Const.KEY_DATA);
+
+                    position = temp_position_;
+                    break;
+            }
         }
+
         return super.onStartCommand(intent, flags, startId);
     }
 

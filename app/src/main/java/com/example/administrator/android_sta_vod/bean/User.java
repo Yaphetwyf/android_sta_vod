@@ -16,12 +16,37 @@ public class User {
     @XStreamAlias("status")
     private String status;
 
+    public String getNick_name() {
+        return nick_name;
+    }
+
+    public void setNick_name(String nick_name) {
+        this.nick_name = nick_name;
+    }
+
+    @XStreamAsAttribute()
+    @XStreamAlias("nick-name")
+    private String nick_name;
+
+    public String getRtsp() {
+        return rtsp;
+    }
+
+    public void setRtsp(String rtsp) {
+        this.rtsp = rtsp;
+    }
+
+    @XStreamAsAttribute()
+    @XStreamAlias("rtsp")
+    private String rtsp;
     public User(){
 
     }
-    public User(String name,String status){
+    public User(String name,String nick_name,String status,String rtsp){
         this.name = name;
         this.status = status;
+        this.nick_name=nick_name;
+        this.rtsp=rtsp;
     }
     public String getName() {
         return name;

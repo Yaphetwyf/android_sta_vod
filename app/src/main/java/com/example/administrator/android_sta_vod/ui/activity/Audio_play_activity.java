@@ -261,7 +261,7 @@ public class Audio_play_activity extends Base_activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
+       // EventBus.getDefault().register(this);
 
         // 一进入音频播放界面后，需要获取上一次的播放模式，刷新按钮的背景
         int playMode = Utils.getAudioPlayMode(this, Audioplay_service.PLAY_MODE_ORDER);

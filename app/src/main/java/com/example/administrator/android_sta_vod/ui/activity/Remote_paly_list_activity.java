@@ -3,6 +3,7 @@ package com.example.administrator.android_sta_vod.ui.activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -13,8 +14,11 @@ import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -22,7 +26,6 @@ import android.widget.TextView;
 import com.broadcast.android.android_sta_jni.ndk_wrapper;
 import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.example.administrator.android_sta_vod.R;
-import com.example.administrator.android_sta_vod.adapter.Remote_play_list_adapter;
 import com.example.administrator.android_sta_vod.bean.Mp3;
 import com.example.administrator.android_sta_vod.service.Audioplay_service;
 import com.example.administrator.android_sta_vod.utils.File_utils;
@@ -33,6 +36,7 @@ import com.example.administrator.android_sta_vod.utils.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -47,10 +51,11 @@ public class Remote_paly_list_activity extends Base_activity {
     // 更新当前播放进度
     private static final int TYPE_UPDATE_CURRENT_POSITION = 0;
     private ListView play_list;
-    private Remote_play_list_adapter play_list_adapter;
-    private MediaPlayer media_player;
+    private Remote_play_list_adapter1 play_list_adapter;
+    private MediaPlayer player;
     private ArrayList<String> songArrayList; //播放声音列表
     private String music_load;
+    public static String delete_music_load;
     private int songIndex = 0;
     private File_utils file_utils;
     private String all_music_load;
@@ -59,7 +64,7 @@ public class Remote_paly_list_activity extends Base_activity {
     private Button remote_toggle_play;
     private Button remote_switch_play_mode;
     private String SD_PATH;
-    private long MAX_SIZE;
+    private int MAX_SIZE;
     private int progress;
     private SeekBar sb_remote;
     private int duration;
@@ -67,10 +72,11 @@ public class Remote_paly_list_activity extends Base_activity {
     private int all_size;
     private ArrayList<Mp3> mp3s;
     private Audioplay_service mService;
-   private ArrayList<Mp3> mp3_play;
-    private NumberProgressBar npb;
     private String tag = "RECORD_ACTIVITY";
-
+    private int music_index=0;
+    private  ArrayList<Integer> mlist_id;
+    private int data_length;
+    private Mp3 mp3;
 
     @Override
     public int get_layout_res() {
@@ -86,8 +92,6 @@ public class Remote_paly_list_activity extends Base_activity {
         remote_switch_play_mode= findView(R.id.btn_remote_switch_play_mode);
         sb_remote = findView(R.id.sb_remote_current_position);
         remote_current_position = findView(R.id.tv_remote_current_position);
-
-
     }
     @Override
     public void init_listener() {
@@ -96,54 +100,57 @@ public class Remote_paly_list_activity extends Base_activity {
         remote_prev.setOnClickListener(this);
         remote_toggle_play.setOnClickListener(this);
         remote_switch_play_mode.setOnClickListener(this);
-        media_player = new MediaPlayer();
-        media_player.setOnCompletionListener(new CompletionListener());
+        player = new MediaPlayer();
+        player.setOnCompletionListener(new CompletionListener());
         SD_PATH  = Environment.getExternalStorageDirectory() + "/";
         music_load= Environment.getExternalStorageDirectory() + "/"+"sdMusic"+"/";
+        delete_music_load=Environment.getExternalStorageDirectory() +"/sdMusic/";
         songArrayList = new ArrayList<String>();
         file_utils = new File_utils();
         ndk_wrapper.instance().set_cb_file_listener(new ndk_wrapper.Cb_file_listener() {
             @Override
             public void cb_file_listener(int id, long file_size, String full_path, String key, byte[] buf) {
-                Log.d("download","id"+id+"file_size"+file_size+"full_path"+full_path+"key"+key+"buf"+buf.length);
+                Log.d("download","id:"+id+"file_size:"+file_size+"full_path:"+full_path+"key:"+key+"buf:"+buf.length);
                 if(key.equals("file_recv_data")){
                     file_utils.write2SDFromInput("sdMusic", full_path.substring(full_path.lastIndexOf("/")),buf);
-                    for (int i = 0; i < mp3s.size(); i++) {
-                        int finalI = i;
-                        int size = mp3s.get(finalI).getData_length();
-                        size+=buf.length;
-                        mp3s.get(finalI).setData_length(size);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                              /*  Log.d(tag, "data_length == " +file_size );
-                                Log.d(tag,"file_length == " +progress );
-                                Log.d(tag, "percent == " +mp3s.get(finalI).getData_length() * 100.0 / file_size );*/
-                                mp3s.get(finalI).setProgress( mp3s.get(finalI).getData_length());
-                                mp3s.get(finalI).setMax((int) mp3s.get(finalI).getFile_size());
+                    progress+=buf.length;
+                   MAX_SIZE= (int) file_size;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(music_index>mp3s.size()-1){
+                            return;
+                        }else {
+
+                            mp3s.get(music_index).setProgress((int) (progress*100.0/MAX_SIZE));
+                            try {
+                                Thread.sleep(5);
                                 play_list_adapter.notifyDataSetChanged();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
                             }
-                        });
+
+                        }
                     }
+                });
                 }
                 if(key.equals("file_recv_start")){
-                /**
-                 * 这里先获取id
-                 * 匹配ID号,如果是相同的ID就填写数据进去
-                 * */
-                   all_music_load = music_load+full_path.substring(full_path.lastIndexOf("/"));
-                    updateGallery(all_music_load);
-                    for (Mp3 mp3 : mp3s) {
-                        mp3.setFile_size(file_size);
-                    }
+                  /*  mp3 = new Mp3();*/
+                    progress=0;
+                    mlist_id.add(id);
+                    all_music_load = music_load+full_path.substring(full_path.lastIndexOf("/"));
+                //    updateGallery(all_music_load);
 
                 }
                 if(key.equals("file_recv_end")){
+                 mp3s.get(music_index).setDownload(true);
+
+                    music_index++;
+                    downLoad_music();
 
                 }
             }
         });
-
 
         play_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -156,7 +163,6 @@ public class Remote_paly_list_activity extends Base_activity {
                 play_list_adapter.setSelectedPosition(songIndex);
                 play_list_adapter.notifyDataSetInvalidated();
                 remote_toggle_play.setBackgroundResource(R.drawable.btn_audio_pause);
-
                  songplay();
                  updateUI();
 
@@ -200,39 +206,56 @@ public class Remote_paly_list_activity extends Base_activity {
                     }
                 });
     }
-
+    HashMap<Integer,Mp3> music_down=new HashMap<>();
     @Override
     public void init_data() {
         Intent intent1 = new Intent(this, Audioplay_service.class);
         bindService(intent1, mServiceConnection, BIND_AUTO_CREATE);
-        mp3_play=new ArrayList<>();
-        String load = SPUtils.getString(Ui_utils.get_context(), download);
+
+        mlist_id=new ArrayList<>();
         createSDDir("sdMusic");
-        Log.d("load",load);
+
         String path3="";
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         mp3s = bundle.getParcelableArrayList("mp3s");
         List<String> music_file = get_music_file();
-        all_size = mp3s.size();
+
         for(int i = 0; i< mp3s.size(); i++){
-            path3=load+ mp3s.get(i).getPath();
+           // path3=load+ mp3s.get(i).getPath();
             String path1 = mp3s.get(i).getName();
             if(music_file.contains(path1)){
-                mp3s.get(i).setDownload(true);
                 songArrayList.add(music_load+path1);
             }else {
-
-                mp3s.get(i).setDownload(false);
                 songArrayList.add(music_load+path1);
-                download(path3);
+              // download(path3);
             }
-        }
 
-        play_list_adapter = new Remote_play_list_adapter(mp3s);
+        }
+        downLoad_music();
+        play_list_adapter = new Remote_play_list_adapter1();
         play_list.setAdapter(play_list_adapter);
 
     }
+
+    private void downLoad_music() {
+        String load = SPUtils.getString(Ui_utils.get_context(), download);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(music_index>mp3s.size()-1){
+                    return;
+                }else {
+                    String path=mp3s.get(music_index).getPath();
+                    String path2=load+path;
+                    Log.d("music_path",path2);
+                    ndk_wrapper.instance().avsz_file_transfer(path2);
+                }
+
+            }
+        }).start();
+    }
+
     ServiceConnection mServiceConnection = new ServiceConnection() {
 
         @Override
@@ -250,7 +273,7 @@ public class Remote_paly_list_activity extends Base_activity {
         }
     };
     private void updateUI(){
-        duration = media_player.getDuration();      // 获取音频播放的总时长
+        duration = player.getDuration();      // 获取音频播放的总时长
         sb_remote.setMax(duration);
         updateCurrentPosition();
     }
@@ -343,8 +366,8 @@ public class Remote_paly_list_activity extends Base_activity {
         }
     }
     public void seekTo(int position) {
-        if (media_player != null) {
-            media_player.seekTo(position);
+        if (player != null) {
+            player.seekTo(position);
         }
     }
     private void togglePlay() {
@@ -361,9 +384,9 @@ public class Remote_paly_list_activity extends Base_activity {
 
         release();
         try {
-            media_player = new MediaPlayer();
-            media_player.setDataSource(path); // 要播放音频的路径
-            media_player.prepareAsync();    // 异步缓冲
+            player = new MediaPlayer();
+            player.setDataSource(path); // 要播放音频的路径
+            player.prepareAsync();    // 异步缓冲
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -390,55 +413,51 @@ public class Remote_paly_list_activity extends Base_activity {
         }
     };
     public int getCurrentPosition() {
-        if (media_player != null) {
-            return media_player.getCurrentPosition();
+        if (player != null) {
+            return player.getCurrentPosition();
         }
         return 0;
     }
 
     private void songplay() {
         try {
-            media_player.reset();
+            player.reset();
             String load = songArrayList.get(songIndex);
-            media_player.setDataSource(load);
-            media_player.prepare();
-          /*  if(mp3s.get(songIndex).getLength().equals(media_player.getDuration())){
-                media_player.start();
-            }else {
-                T.show_short(Ui_utils.get_string(R.string.add));
-            }*/
-            media_player.start();
+            player.setDataSource(load);
+            player.prepare();
+
+            player.start();
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
             T.show_short(Ui_utils.get_string(R.string.error));
-            media_player.stop();
+            player.stop();
         }
     }
     private void release() {
-        if (media_player != null) {
-            media_player.reset();
-            media_player.release();
-            media_player = null;
+        if (player != null) {
+            player.reset();
+            player.release();
+            player = null;
         }
     }
 
 
     public void start() {
-        if (media_player != null) {
-            media_player.start();
+        if (player != null) {
+            player.start();
         }
     }
     public void pause() {
-        if (media_player != null) {
-            media_player.pause();
+        if (player != null) {
+            player.pause();
 
         }
     }
 
     public boolean isPlaying() {
-        if (media_player != null) {
-            return media_player.isPlaying();
+        if (player != null) {
+            return player.isPlaying();
         }
         return false;
     }
@@ -498,9 +517,95 @@ public class Remote_paly_list_activity extends Base_activity {
     protected void onDestroy() {
         super.onDestroy();
         // 解绑服务
+        deleteDir();
         unbindService(mServiceConnection);
         songArrayList.clear();
         release();
     }
+    public static void deleteDir() {
+        File dir = new File(delete_music_load);
+        if (dir == null || !dir.exists() || !dir.isDirectory())
+            return;
 
+        for (File file : dir.listFiles()) {
+            if (file.isFile())
+                file.delete(); // 删除所有文件
+            else if (file.isDirectory())
+                deleteDir(); // 递规的方式删除文件夹
+        }
+        dir.delete();// 删除目录本身
+    }
+
+    class Remote_play_list_adapter1 extends BaseAdapter {
+
+        private int selectedPosition = -1;// 选中的位置
+        private LinearLayout ll_select_music;
+        @Override
+        public int getCount() {
+            if(play_list!=null){
+                return mp3s.size();
+            }
+            return 0;
+        }
+        @Override
+        public Object getItem(int position) {
+            return mp3s.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        public void setSelectedPosition(int position) {
+            selectedPosition = position;
+        }
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+          ViewHolder viewHolder;
+            if(convertView==null){
+                convertView= Ui_utils.inflate(R.layout.item_play_list);
+                viewHolder=new ViewHolder();
+                viewHolder.tv_paly_list= (TextView) convertView.findViewById(R.id.tv_item_play_list);
+                viewHolder.npb_domnload= (NumberProgressBar) convertView.findViewById(R.id.npb_down_load);
+                viewHolder.ll_select_music= (LinearLayout) convertView.findViewById(R.id.ll_setlect_music);
+                convertView.setTag(viewHolder);
+            }else{
+                viewHolder= (ViewHolder) convertView.getTag();
+            }
+            ll_select_music=viewHolder.ll_select_music;
+            if (selectedPosition == position) {
+                ll_select_music.setBackgroundColor(Color.GREEN);
+            } else {
+                ll_select_music.setBackgroundColor(Color.TRANSPARENT);
+            }
+
+      if(mp3s.get(position).isDownload()){
+          viewHolder.npb_domnload.setVisibility(View.GONE);
+      }else {
+         /* if(music_index>position){
+          }else if(music_index==position){
+              viewHolder.npb_domnload.setProgress(mp3s.get(music_index).getProgress());
+          }*/
+          Mp3 mp3 = mp3s.get(position);
+          int progress = mp3s.get(position).getProgress();
+          int progress1 = mp3.getProgress();
+          if(progress1!=0){
+              viewHolder.npb_domnload.setProgress(progress1);
+          }else {
+              viewHolder.npb_domnload.setProgress(0);
+              viewHolder.npb_domnload.setVisibility(View.VISIBLE);
+          }
+      }
+            viewHolder.tv_paly_list.setText(mp3s.get(position).getName());
+            return convertView;
+        }
+
+        class ViewHolder{
+            TextView tv_paly_list;
+            NumberProgressBar npb_domnload;
+            LinearLayout ll_select_music;
+        }
+
+    }
 }

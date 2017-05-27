@@ -13,7 +13,6 @@ import com.example.administrator.android_sta_vod.R;
 import com.example.administrator.android_sta_vod.bean.Mp3;
 import com.example.administrator.android_sta_vod.utils.Ui_utils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,9 +21,10 @@ import java.util.List;
 
 public class Remote_play_list_adapter extends BaseAdapter {
     private List<Mp3> play_list;
+
     private int selectedPosition = -1;// 选中的位置
     private LinearLayout ll_select_music;
-    public Remote_play_list_adapter(ArrayList<Mp3> play_list) {
+    public Remote_play_list_adapter(List<Mp3> play_list) {
         this.play_list = play_list;
     }
 
@@ -75,12 +75,14 @@ public class Remote_play_list_adapter extends BaseAdapter {
         Log.d("progress",""+progress);
         Log.d("max",""+max);
         viewHolder.npb_domnload.setVisibility(View.GONE);
-        if(play_list.get(position).isDownload()){
+        /*if(play_list.get(position).isDownload()){
             viewHolder.npb_domnload.setProgress(100);
         }else {
             viewHolder.npb_domnload.setProgress(play_list.get(position).getProgress());
             viewHolder.npb_domnload.setMax(play_list.get(position).getMax());
-        }
+        }*/
+        viewHolder.npb_domnload.setProgress(play_list.get(position).getProgress());
+        viewHolder.npb_domnload.setMax(play_list.get(position).getMax());
         return convertView;
     }
 

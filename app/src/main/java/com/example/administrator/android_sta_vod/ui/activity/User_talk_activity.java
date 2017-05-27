@@ -88,7 +88,6 @@ public class User_talk_activity extends AppCompatActivity implements SurfaceHold
                     if (p == null) {
                         break;
                     }
-
                     if (null == h264Decode && null != p && svFar != null) {
                         //开始有数据回调时初始化decode
                         try {
@@ -145,9 +144,7 @@ public class User_talk_activity extends AppCompatActivity implements SurfaceHold
                                 Log.d("aac_encordthread", "pcm_time" + ppacket.getTime() + "cur_time" + System
                                         .currentTimeMillis());
                             } catch (Exception e) {
-
                             }
-
                         }
                     } else {
                         Thread.sleep(10);
@@ -208,7 +205,6 @@ public class User_talk_activity extends AppCompatActivity implements SurfaceHold
     private void init_view() {
 
         username = getIntent().getStringExtra("user_name");
-
         svNear=(SurfaceView) findViewById(R.id.sv_near);
 
         Log.d("svNear",svNear+"===");

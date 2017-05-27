@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 //apply plugin: 'com.neenbedankt.android-apt'
+apply plugin:'org.greenrobot.greendao'
 android {
     compileSdkVersion 24
     buildToolsVersion "24.0.3"
@@ -8,19 +9,13 @@ android {
         minSdkVersion 16
         targetSdkVersion 21
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         jackOptions {
             enabled true
         }
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
 
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -31,8 +26,12 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    greendao{
+        schemaVersion 1
+        daoPackage'com.afa.tourism.greendao.gen'
+        targetGenDir'src/main/java'
+    }
 }
-
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -46,4 +45,8 @@ dependencies {
     compile 'com.jakewharton:butterknife:8.4.0'
     compile 'com.thoughtworks.xstream:xstream:1.4.9'
     compile project(':numberprogressbar')
+    compile'org.greenrobot:greendao:3.1.0'
+    compile'org.greenrobot:greendao-generator:3.1.0'
+    compile 'com.tencent.bugly:crashreport:latest.release' //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.1.9
+    compile 'com.tencent.bugly:nativecrashreport:latest.release' //其中latest.release指代最新Bugly NDK版本号，也可以指定明确的版本号，例如3.0
 }

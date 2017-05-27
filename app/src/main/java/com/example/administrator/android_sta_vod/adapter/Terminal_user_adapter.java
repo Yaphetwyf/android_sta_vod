@@ -1,5 +1,6 @@
 package com.example.administrator.android_sta_vod.adapter;
 
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -56,6 +57,7 @@ public class Terminal_user_adapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         viewHolder.name.setText(userList.get(position).getName());
+        Log.d("terminal_state",userList.get(position).getStatus()+"");
         if(userList.get(position).getStatus().equals("1")){
             viewHolder.image.setImageResource(R.drawable.terminal_online);
         }else if(userList.get(position).getStatus().equals("3")||userList.get(position).getStatus().equals("2")){

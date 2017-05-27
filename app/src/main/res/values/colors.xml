@@ -6,7 +6,7 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="white">#ffffffff</color>
-    <color name="selector_tab_color">#decb6d</color>
+    <color name="selector_tab_color">#D4D8D9</color>
 
     <color name="black">#000</color>
     <color name="red">#f00</color>
@@ -23,7 +23,7 @@
 
     <color name="tab_text_normal">#8D9AA0</color>
     <color name="tab_text_selected">#5CB292</color>
-    <color name="tab_indicator">#dacb6e</color>
+    <color name="tab_indicator">#69CFD6</color>
 
     <color name="list_divider">#449C9A9C</color>
     <color name="list_item_bg_normal">#ffEBEBEB</color>

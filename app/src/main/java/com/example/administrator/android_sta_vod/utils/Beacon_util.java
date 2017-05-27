@@ -48,7 +48,6 @@ public class Beacon_util {
 
     public static ArrayList<FileBean> progs_to_file(Progs progs)
     {
-
         return get_paths(progs);
     }
 

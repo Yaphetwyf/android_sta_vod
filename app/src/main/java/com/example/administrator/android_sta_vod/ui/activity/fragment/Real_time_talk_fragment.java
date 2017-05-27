@@ -1,6 +1,5 @@
 package com.example.administrator.android_sta_vod.ui.activity.fragment;
 
-import android.content.Intent;
 import android.media.AudioFormat;
 import android.media.MediaRecorder;
 import android.os.Bundle;
@@ -12,6 +11,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.afa.tourism.greendao.gen.DaoMaster;
+import com.afa.tourism.greendao.gen.DaoSession;
+import com.afa.tourism.greendao.gen.TermDao;
 import com.broadcast.android.android_sta_jni.ndk_wrapper;
 import com.example.administrator.android_sta_vod.R;
 import com.example.administrator.android_sta_vod.base.Const;
@@ -28,7 +30,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 
@@ -42,7 +44,7 @@ public class Real_time_talk_fragment extends BaseFragment {
 
     private String tag = "REAL_TIME_TALK_FRAGMENT";
     private TextView tv_real_time;
-
+private TermDao termDao;
     private AudioCapturer capturer;
     //采集音频参数
     private int sampleRate = 8000;   //采样率，默认44.1k
@@ -53,6 +55,7 @@ public class Real_time_talk_fragment extends BaseFragment {
     private boolean speaking = Const.speaking;
     private ArrayBlockingQueue<byte[]> audio_queue;
     private boolean thread_start;
+
     private Handler handler = new Handler() {
         public void handleMessage(Message msg)
         {
@@ -107,22 +110,36 @@ public class Real_time_talk_fragment extends BaseFragment {
     @Override
     public void init_data() {
         audio_queue = new ArrayBlockingQueue<byte[]>(100000);
-
+        DaoMaster.DevOpenHelper devOpenHelper = new DaoMaster.DevOpenHelper(getActivity().getApplicationContext(), "term.db", null);
+        DaoMaster daoMaster = new DaoMaster(devOpenHelper.getWritableDb());
+        DaoSession daoSession = daoMaster.newSession();
+        termDao = daoSession.getTermDao();
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(Avsz_info_event avsz_info_event)
     {
         String value = avsz_info_event.get_value();
+        String type = avsz_info_event.get_type();
         Log.d("start_value",""+value );
-        if (value.contains("ok"))
-        {
-            Const.speaking = true;
-            start_audiocapture();
-            Log.d("start_audiocapture","start_audiocapture");
-        } else
-        {
+        if(type.equals("real_cap_start_ret")){
+            if (value.contains("-915"))
+            {
+                T.show_short(Ui_utils.get_string(R.string.term_busy));
+            } else if(value.contains("all_busy"))
+            {
+                T.show_short(Ui_utils.get_string(R.string.term_busy));
+
+            }else {
+                iv_real_time.setImageDrawable(Ui_utils.get_drawable(R.drawable.real_time_stop));
+                tv_real_time.setText(Ui_utils.get_string(R.string.real_time_stop));
+                Const.speaking = true;
+                start_audiocapture();
+                Log.d("start_audiocapture","start_audiocapture");
+            }
+        }else {
             return;
         }
+
 
     }
 
@@ -170,9 +187,12 @@ public class Real_time_talk_fragment extends BaseFragment {
            }
            if (Const.speaking)
            {
-               if (capturer.isCaptureStarted())
-               {
-                   capturer.stopCapture();
+               if(capturer!=null){
+                   if (capturer.isCaptureStarted())
+                   {
+                       capturer.stopCapture();
+                   }
+
                }
                iv_real_time.setImageDrawable(Ui_utils.get_drawable(R.drawable.real_time_start));
                tv_real_time.setText(Ui_utils.get_string(R.string.real_time_start));
@@ -181,13 +201,15 @@ public class Real_time_talk_fragment extends BaseFragment {
                ndk_wrapper.instance().avsz_real_cap_stop();
 
            }else {
-               Intent intent = getActivity().getIntent();
+               /*Intent intent = getActivity().getIntent();
                Bundle bundle = intent.getExtras();
                if(bundle==null){
                    T.show_short(Ui_utils.get_string(R.string.please_add_terminal));
                    return;
                }
-               ArrayList<Term> checked_terms = bundle.getParcelableArrayList("terms");
+               ArrayList<Term> checked_terms = bundle.getParcelableArrayList("terms");*/
+             /*  List<Terminal> checked_terms = terminalDao.loadAll();*/
+               List<Term> checked_terms = termDao.loadAll();
                if(checked_terms!=null&&checked_terms.size()>0){
                    Terms terms= new Terms(checked_terms);
                    String terms_xml = XmlUtils.toXml(terms);
@@ -204,12 +226,11 @@ public class Real_time_talk_fragment extends BaseFragment {
                    } else
                    {
                        int ret = ndk_wrapper.instance().avsz_real_cap_start(terms_xml);
-
                        Log.d(tag, "ret ==" + ret);
+                       if(ret==-2){
+                           T.show_short(Ui_utils.get_string(R.string.server_connect_failure));
+                       }
                    }
-                   iv_real_time.setImageDrawable(Ui_utils.get_drawable(R.drawable.real_time_stop));
-                   tv_real_time.setText(Ui_utils.get_string(R.string.real_time_stop));
-                   Const.speaking = true;
                    mLast_time = System.currentTimeMillis();
                }else if(checked_terms.size()==0){
                    T.show_short(Ui_utils.get_string(R.string.please_add_terminal));
@@ -235,6 +256,13 @@ public class Real_time_talk_fragment extends BaseFragment {
             thread_sendaudio.interrupt();
             thread_sendaudio = null;
         }
+        if(capturer!=null){
+            if (capturer.isCaptureStarted())
+            {
+                capturer.stopCapture();
+            }
+        }
+
         EventBus.getDefault().unregister(this);
     }
 }

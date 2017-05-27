@@ -51,6 +51,7 @@ public class Add_terminal_activity extends Base_activity {
         btn_sure_term.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 ArrayList<Term> terms = expandlist_adapter.get_terms();
                 Intent intent=new Intent();
                 intent.setClass(getApplicationContext(),Real_time_activity.class);
@@ -62,11 +63,13 @@ public class Add_terminal_activity extends Base_activity {
             }
         });
     }
-
     @Override
     public void init_data() {
         areas = Net_data.instance().get_areas();
         terms = Net_data.instance().get_terms();
+        if(areas==null&&terms==null){
+            return;
+        }
         if (null != areas.getAreas())
         {
             init_goal_data();
@@ -126,7 +129,7 @@ public class Add_terminal_activity extends Base_activity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
+//        EventBus.getDefault().register(this);
     }
     @Override
     public void onDestroy() {

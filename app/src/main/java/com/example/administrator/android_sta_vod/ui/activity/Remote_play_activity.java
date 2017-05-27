@@ -2,6 +2,7 @@ package com.example.administrator.android_sta_vod.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,6 +27,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -52,7 +54,7 @@ public class Remote_play_activity extends AppCompatActivity implements View.OnCl
     private TextView mTv_cancel;
     private TextView mTv_sel;
     private TextView mTv_confirm;
-
+    public  String delete_music_load;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)    {
@@ -63,6 +65,9 @@ public class Remote_play_activity extends AppCompatActivity implements View.OnCl
         init_data();
         init_view();
         init_event();
+        delete_music_load= Environment.getExternalStorageDirectory() +"/sdMusic/";
+        deleteDir();
+
     }
 
     private void init_data()
@@ -81,8 +86,6 @@ public class Remote_play_activity extends AppCompatActivity implements View.OnCl
     private void init_view()
     {
         mRv_addmusic = (RecyclerView) findViewById(R.id.rv_addmusic);
-
-
         mIv_up = (ImageButton) findViewById(R.id.iv_up);
         mTv_cancel = (TextView) findViewById(R.id.tv_cancel);
         mTv_sel = (TextView) findViewById(R.id.tv_sel);
@@ -110,7 +113,19 @@ public class Remote_play_activity extends AppCompatActivity implements View.OnCl
         mTv_confirm.setOnClickListener(this);
 
     }
+    public  void deleteDir() {
+        File dir = new File(delete_music_load);
+        if (dir == null || !dir.exists() || !dir.isDirectory())
+            return;
 
+        for (File file : dir.listFiles()) {
+            if (file.isFile())
+                file.delete(); // 删除所有文件
+            else if (file.isDirectory())
+                deleteDir(); // 递规的方式删除文件夹
+        }
+        dir.delete();// 删除目录本身
+    }
     private void adapter_addlis()
     {
         mMusicAdapter.setOnMusicClickLitener(new MusicAdapter.OnMusicClickLitener() {
@@ -234,7 +249,6 @@ public class Remote_play_activity extends AppCompatActivity implements View.OnCl
     {
         switch (v.getId())
         {
-
             case R.id.tv_cancel:
 
                 finish();

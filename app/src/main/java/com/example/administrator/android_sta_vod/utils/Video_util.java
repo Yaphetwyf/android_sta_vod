@@ -32,8 +32,8 @@ import java.util.concurrent.BlockingQueue;
 public class Video_util {
 
     private int framerate = 25;
-    private int width = 1280;
-    private int height = 720;
+    private int width = 640;
+    private int height = 480;
     private int bitrate;
     private String path = "/mnt/sdcard/videoutil.h264";
     private NV21Convertor mConvertor;
@@ -45,7 +45,7 @@ public class Video_util {
     private boolean h264playing = true;
     private SurfaceView svTalkback;
     private static final String tag = "VIDEO_UTIL";
-
+    public static long video_capture_time = System.currentTimeMillis();
     public Video_util(SurfaceView surfaceView) {
         this.svTalkback = surfaceView;
         this.h264dataQueue = new ArrayBlockingQueue<Packet>(10000);
@@ -274,7 +274,7 @@ public class Video_util {
                             e.printStackTrace();
                         }
 
-                        Util.save(outData, 0, outData.length, path, true);
+//                        Util.save(outData, 0, outData.length, path, true);
 
                         mMediaCodec.releaseOutputBuffer(outputBufferIndex, false);
                         outputBufferIndex = mMediaCodec.dequeueOutputBuffer(bufferInfo, 0);
@@ -305,19 +305,19 @@ public class Video_util {
             while (h264playing) {
 
                 try {
-                        Packet p = h264dataQueue.take();
-                        if (p == null) {
-                            break;
-                        }
-                        //发送数据
-                        ndk_wrapper.instance().avsz_async_vid(p.data, p.timestamp, p.width, p.height, framerate);
-                        Log.d(tag,"send_data");
+                    Packet p = h264dataQueue.take();
+                    if (p == null) {
+                        break;
+                    }
+                    //发送数据
+                    ndk_wrapper.instance().avsz_async_vid(p.data, p.timestamp, p.width, p.height, framerate);
+                    Log.d(tag,"send_data");
+                    video_capture_time = System.currentTimeMillis();
 
 
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-
                 }
 
             }

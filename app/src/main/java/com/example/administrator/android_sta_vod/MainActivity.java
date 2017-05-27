@@ -87,6 +87,7 @@ public class MainActivity extends Base_activity {
         video_play_ll_= findView(R.id.main_ll_videoplay);
         broadercast_ll_=findView(R.id.main_ll_broadercast);
        real_time_ll_= findView(R.id.main_ll_real_time);
+
     }
 
     @Override
@@ -225,18 +226,27 @@ public class MainActivity extends Base_activity {
                 }
             }
         }
-        if ("close".equals(key) || "timeout".equals(key) || "finished".equals(key)) {
+        if ("tcp".equals(type))
+        {
+            if ("close_conn_i".equals(key)||"close".equals(key) || "timeout".equals(key) || "finished".equals(key)) {
+                tv_sta_vod_state.setText(Ui_utils.get_string(R.string.off_line_one));
+            }
+        }
+        if ("login_ret_usr_list".equals(type) && value.contains("ok"))
+        {
+            tv_sta_vod_state.setText(Ui_utils.get_string(R.string.on_line_one));
+        }
+       /* if ("close_conn_i".equals(key)||"close".equals(key) || "timeout".equals(key) || "finished".equals(key)) {
             tv_sta_vod_state.setText(Ui_utils.get_string(R.string.off_line_one));
         }else{
             tv_sta_vod_state.setText(Ui_utils.get_string(R.string.on_line_one));
-        }
+        }*/
         if (null != users) {
             if ("usr_offline".equals(type)) {
                 for (int i = 0; i < users.getUsers().size(); i++) {
 
                     if (key.equals(users.getUsers().get(i).getName())) {
                         users.getUsers().get(i).setStatus("0");
-
                         Log.d(tag, "usr_online" + users.getUsers().get(i).getName());
 
                     }
@@ -266,7 +276,7 @@ public class MainActivity extends Base_activity {
                     player.seekTo(0);
                 }
             }
-            dialog_term_answer.dismiss();
+//            dialog_term_answer.dismiss();
             dialog_term_answer=null;
         }
     }
@@ -302,8 +312,11 @@ public class MainActivity extends Base_activity {
                         player.seekTo(0);
                     }
                 }
-                dialog_term_answer.dismiss();
-                dialog_term_answer=null;
+                if(dialog_term_answer!=null){
+                    dialog_term_answer.dismiss();
+                    dialog_term_answer=null;
+                }
+
             }
         });
         dialog_term_answer.show();
@@ -366,7 +379,7 @@ public class MainActivity extends Base_activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
+//        EventBus.getDefault().register(this);
 
 
     }
@@ -387,8 +400,8 @@ public class MainActivity extends Base_activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
-
+       EventBus.getDefault().unregister(this);
+        ndk_wrapper.instance().avsz_fini();
     }
 
     @Override

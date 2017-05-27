@@ -134,7 +134,7 @@ public class Time_broadcast_activity extends Base_activity {
         super.onCreate(savedInstanceState);
         Beacon_util.login();
 
-            EventBus.getDefault().register(this);
+//            EventBus.getDefault().register(this);
 
     }
 
