@@ -1,5 +1,7 @@
 package com.example.administrator.android_sta_vod.ui.activity;
 
+import android.app.KeyguardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
@@ -11,7 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.broadcast.android.android_sta_jni.ndk_wrapper;
+import com.broadcast.android.android_sta_jni_official.ndk_wrapper;
 import com.example.administrator.android_sta_vod.R;
 import com.example.administrator.android_sta_vod.app.My_application;
 import com.example.administrator.android_sta_vod.app.Net_data;
@@ -20,6 +22,7 @@ import com.example.administrator.android_sta_vod.base.Global;
 import com.example.administrator.android_sta_vod.bean.Users;
 import com.example.administrator.android_sta_vod.event.Avsz_info_event;
 import com.example.administrator.android_sta_vod.inference.IUIOperation;
+import com.example.administrator.android_sta_vod.service.User_service;
 import com.example.administrator.android_sta_vod.ui.activity.dialogs.Dialog_term_answer;
 import com.example.administrator.android_sta_vod.ui.activity.dialogs.Dialog_text_answer;
 import com.example.administrator.android_sta_vod.utils.Ui_utils;
@@ -54,6 +57,8 @@ public abstract class Base_activity extends AppCompatActivity implements IUIOper
         init_data();
         Net_data.instance();
         EventBus.getDefault().register(this);
+        Intent intent=new Intent(this, User_service.class);
+        startService(intent);
     }
 
     /** 设置Activity界面的标题 */
@@ -102,12 +107,22 @@ public abstract class Base_activity extends AppCompatActivity implements IUIOper
         String type = info.get_type();
         String key = info.get_key();
         String value = info.get_value();
+        KeyguardManager km =
+                (KeyguardManager) this.getSystemService(Context.KEYGUARD_SERVICE);
+        boolean showingLocked = km.inKeyguardRestrictedInputMode();
         if ("usr_call_req".equals(type)) {
-            if(null == dialog_text_answer){
-                show_ansdialog(type, key, value);
-                if (null != player) {
-                    if (!player.isPlaying()) {
-                        player.start();
+
+            if(showingLocked){
+                Intent intent=new Intent(this,Answer_user_activity.class);
+                intent.putExtra("key", key);
+                startActivity(intent);
+            }else {
+                if(null == dialog_text_answer){
+                    show_ansdialog(type, key, value);
+                    if (null != player) {
+                        if (!player.isPlaying()) {
+                            player.start();
+                        }
                     }
                 }
             }
@@ -146,12 +161,19 @@ public abstract class Base_activity extends AppCompatActivity implements IUIOper
             }
         }
         if("term_call_req".equals(type)){
-            if (null != player) {
-                if (!player.isPlaying()) {
-                    player.start();
+            if(showingLocked){
+                Intent intent=new Intent(this,Answer_term_activity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("term_id", key);
+                bundle.putString("term_name", value);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }else {
+                if (null != player) {
+                    if (!player.isPlaying()) {
+                        player.start();
+                    }
                 }
-            }
-            if(dialog_term_answer==null){
                 show_trem_ansdialog(type, key, value);
             }
         }

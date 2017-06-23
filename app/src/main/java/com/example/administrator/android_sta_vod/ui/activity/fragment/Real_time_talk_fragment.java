@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.afa.tourism.greendao.gen.DaoMaster;
 import com.afa.tourism.greendao.gen.DaoSession;
 import com.afa.tourism.greendao.gen.TermDao;
-import com.broadcast.android.android_sta_jni.ndk_wrapper;
+import com.broadcast.android.android_sta_jni_official.ndk_wrapper;
 import com.example.administrator.android_sta_vod.R;
 import com.example.administrator.android_sta_vod.base.Const;
 import com.example.administrator.android_sta_vod.bean.Term;

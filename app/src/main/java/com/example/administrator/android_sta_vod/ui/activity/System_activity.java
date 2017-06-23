@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.broadcast.android.android_sta_jni.ndk_wrapper;
+import com.broadcast.android.android_sta_jni_official.ndk_wrapper;
 import com.example.administrator.android_sta_vod.R;
 import com.example.administrator.android_sta_vod.app.My_application;
 import com.example.administrator.android_sta_vod.base.Const;
@@ -215,7 +215,6 @@ public String state="";
         if (null != users) {
             if ("usr_offline".equals(type)) {
                 for (int i = 0; i < users.getUsers().size(); i++) {
-
                     if (key.equals(users.getUsers().get(i).getName())) {
                         users.getUsers().get(i).setStatus("0");
                         Log.d(tag, "usr_online" + users.getUsers().get(i).getName());
@@ -227,7 +226,6 @@ public String state="";
                 for (int i = 0; i < users.getUsers().size(); i++) {
                     if (key.equals(users.getUsers().get(i).getName())) {
                         users.getUsers().get(i).setStatus("1");
-
                     }
                 }
             }

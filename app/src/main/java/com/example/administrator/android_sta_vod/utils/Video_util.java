@@ -9,8 +9,8 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-
-import com.broadcast.android.android_sta_jni.ndk_wrapper;
+import com.broadcast.android.android_sta_jni_official.ndk_wrapper;
+import com.example.administrator.android_sta_vod.app.My_application;
 import com.example.administrator.android_sta_vod.endecode.EncoderDebugger;
 import com.example.administrator.android_sta_vod.endecode.H264Decoder;
 import com.example.administrator.android_sta_vod.endecode.NV21Convertor;
@@ -35,7 +35,7 @@ public class Video_util {
     private int width = 640;
     private int height = 480;
     private int bitrate;
-    private String path = "/mnt/sdcard/videoutil.h264";
+    private String path = "/mnt/sdcard/videoutil.mp4";
     private NV21Convertor mConvertor;
     private MediaCodec mMediaCodec;
     private int mCameraId = Camera.CameraInfo.CAMERA_FACING_BACK;//Camera.CameraInfo.CAMERA_FACING_BACK;
@@ -46,6 +46,8 @@ public class Video_util {
     private SurfaceView svTalkback;
     private static final String tag = "VIDEO_UTIL";
     public static long video_capture_time = System.currentTimeMillis();
+    private ByteBuffer outputBuffer;
+    byte[] mPpsSps=new byte[0];
     public Video_util(SurfaceView surfaceView) {
         this.svTalkback = surfaceView;
         this.h264dataQueue = new ArrayBlockingQueue<Packet>(10000);
@@ -59,7 +61,6 @@ public class Video_util {
         EncoderDebugger debugger = EncoderDebugger.debug(Ui_utils.get_context(), width, height);
         mConvertor = debugger.getNV21Convertor();
         try {
-
             mMediaCodec = MediaCodec.createByCodecName(debugger.getEncoderName());
             Log.d("mMediaCodec", mMediaCodec.toString());
             MediaFormat mediaFormat;
@@ -125,14 +126,12 @@ public class Video_util {
             Camera.getCameraInfo(mCameraId, camInfo);
             int cameraRotationOffset = camInfo.orientation;
 //            int rotate = (360 + cameraRotationOffset - getDgree()) % 360;
-            int rotate = (360 + cameraRotationOffset - 180) % 360;
+             int rotate = (360 + cameraRotationOffset - 180) % 360;
             parameters.setRotation(rotate);
-
             parameters.setPreviewFormat(ImageFormat.NV21);
             List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
             parameters.setPreviewSize(width, height);
             parameters.setPreviewFpsRange(max[0], max[1]);
-
             mCamera.setParameters(parameters);
             mCamera.autoFocus(null);
             int displayRotation;
@@ -215,8 +214,8 @@ public class Video_util {
         }
     }
 
-    Camera.PreviewCallback previewCallback = new Camera.PreviewCallback() {
-        byte[] mPpsSps = new byte[0];
+    Camera.PreviewCallback previewCallback =  new Camera.PreviewCallback() {
+
 
         @Override
         public void onPreviewFrame(byte[] data, Camera camera) {
@@ -243,16 +242,19 @@ public class Video_util {
                             System.nanoTime() / 1000, 0);
                     MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
                     int outputBufferIndex = mMediaCodec.dequeueOutputBuffer(bufferInfo, 0);
+                    String uniqueTimeStrLock = "fenghuo";
                     while (outputBufferIndex >= 0) {
-                        ByteBuffer outputBuffer = outputBuffers[outputBufferIndex];
-                        byte[] outData = new byte[bufferInfo.size];
+                        outputBuffer =  outputBuffers[outputBufferIndex];
+                        My_application.sbyteCache.put(uniqueTimeStrLock, new
+                                byte[bufferInfo.size]);
+                        byte[] outData= My_application.sbyteCache.get(uniqueTimeStrLock);
                         outputBuffer.get(outData);
                         //记录pps和sps
                         int x = outData[3] & 0x1f;
                         int y = outData[4] & 0x1f;
                         Packet packet = new Packet(outData, 0, width, height);
                         if ((outData[0] == 0 && outData[1] == 0 && outData[2] == 1 && x == 7) || (outData[0] == 0 &&
-                                outData[1] == 0 && outData[2] == 0 && outData[3] == 1 && y == 7)) {
+                                outData[1] == 0 && outData[2] == 0 && outData[3] == 1 && y == 7)){
                             mPpsSps = outData;
 //                            Packet packet = new Packet(outData, 0, width, height);
                         } else if ((outData[0] == 0 && outData[1] == 0 && outData[2] == 1 && x == 5) || (outData[0]
@@ -260,24 +262,23 @@ public class Video_util {
                             //在关键帧前面加上pps和sps数据
 //                            Log.e("easypusher", "Current I Frame:%d " + System.currentTimeMillis());
 
-                            byte[] iframeData = new byte[mPpsSps.length + outData.length];
-                            System.arraycopy(mPpsSps, 0, iframeData, 0, mPpsSps.length);
-                            System.arraycopy(outData, 0, iframeData, mPpsSps.length, outData.length);
-                            outData = iframeData;
+                            My_application.sbyteCache.put(uniqueTimeStrLock, new byte[mPpsSps
+                                    .length + outData.length]);
+                            System.arraycopy(mPpsSps, 0,  My_application.sbyteCache.get
+                                    (uniqueTimeStrLock), 0, mPpsSps.length);
+                            System.arraycopy(outData, 0,  My_application.sbyteCache.get
+                                    (uniqueTimeStrLock), mPpsSps.length, outData.length);
+                            outData =  My_application.sbyteCache.get(uniqueTimeStrLock);
                             packet = new Packet(outData, 1, width, height);
                         }
-
                         Log.i(tag, "outdata" + outData.length);
                         try {
                             h264dataQueue.put(packet);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-
-//                        Util.save(outData, 0, outData.length, path, true);
-
                         mMediaCodec.releaseOutputBuffer(outputBufferIndex, false);
-                        outputBufferIndex = mMediaCodec.dequeueOutputBuffer(bufferInfo, 0);
+                      //  outputBuffer.clear();
                     }
                 } else {
                     Log.e("easypusher", "No buffer available !");
@@ -296,7 +297,27 @@ public class Video_util {
 
     };
 
-
+    private void makePpsSps(byte[] outData) {
+        outputBuffer.get(outData);
+        //记录pps和sps
+        if ((outData[0] == 0 && outData[1] == 0 && outData[2] == 1 &&
+                (outData[3] & 0x1f) == 7) || (outData[0] == 0 && outData[1] == 0 &&
+                outData[2] == 0 && outData[3] == 1 && (outData[4] & 0x1f) == 7)) {
+            mPpsSps = outData;
+        } else if ((outData[0] == 0 && outData[1] == 0 && outData[2] == 1 && (outData[3] &
+                0x1f) == 5) || (outData[0] == 0 && outData[1] == 0 && outData[2] == 0 &&
+                outData[3] == 1 && (outData[4] & 0x1f) == 5)) {
+            //在关键帧前面加上pps和sps数据
+            String uniqueTimeStrLock ="fenghuo";
+            My_application.sbyteCache.put(uniqueTimeStrLock, new byte[mPpsSps
+                    .length + outData.length]);
+            System.arraycopy(mPpsSps, 0,  My_application.sbyteCache.get
+                    (uniqueTimeStrLock), 0, mPpsSps.length);
+            System.arraycopy(outData, 0,  My_application.sbyteCache.get
+                    (uniqueTimeStrLock), mPpsSps.length, outData.length);
+            outData=My_application.sbyteCache.get(uniqueTimeStrLock);
+        }
+    }
     private H264Decoder h264Decode;
 
     public Thread user_send_video_thread = new Thread(new Runnable() {
@@ -313,9 +334,6 @@ public class Video_util {
                     ndk_wrapper.instance().avsz_async_vid(p.data, p.timestamp, p.width, p.height, framerate);
                     Log.d(tag,"send_data");
                     video_capture_time = System.currentTimeMillis();
-
-
-
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">峰火科技</string>
+    <string name="app_name">点播终端</string>
 
     <string name="local_play">本地点播</string>
     <string name="remote_play">远程点播</string>
@@ -116,7 +116,9 @@
     <string name="add">添加</string>
     <string name="real_time_stop">停止采播</string>
     <string name="real_time_start">开始采播</string>
-
+    <string name="online_calling">在线呼叫</string>
+    <string name="online_calling_phone">呼叫手机</string>
+    <string name="please_choose_call">选择呼叫方式</string>
 
     <string name="please_add_terminal">请添加终端</string>
     <string name="real_time_talk">实时讲话</string>
@@ -169,6 +171,7 @@
     <string name="talk_play">对讲播放</string>
     <string name="task_started">该任务已手动执行</string>
     <string name="task_free">该任务未执行</string>
+    <string name="task_failed">该任务执行失败</string>
     <string name="duration">持续</string>
     <string name="from">起</string>
     <string name="to">到</string>

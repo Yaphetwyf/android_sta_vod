@@ -3,7 +3,7 @@ package com.example.administrator.android_sta_vod.utils;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.broadcast.android.android_sta_jni.ndk_wrapper;
+import com.broadcast.android.android_sta_jni_official.ndk_wrapper;
 import com.example.administrator.android_sta_vod.R;
 import com.example.administrator.android_sta_vod.base.Const;
 import com.example.administrator.android_sta_vod.bean.FileBean;
@@ -38,7 +38,11 @@ public class Beacon_util {
         {
             if (net_connect)
             {
-                ndk_wrapper.instance().avsz_init(server_address, (short) 1220, username, password);
+                if(Ui_utils.isIp(server_address)){
+                    ndk_wrapper.instance().avsz_init(server_address, (short) 1220, username, password);
+                }else {
+                    Ui_utils.url_to_tp(server_address);
+                }
             } else
             {
                 T.show_short(Ui_utils.get_string(R.string.net_connect_failure));

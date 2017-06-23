@@ -105,6 +105,7 @@ public class Terminal_two_fragment extends BaseFragment {
                     idList.add(id);
                  }
                  if(idList.contains(checked_terms.get(i).getId())){
+
                  }else {
                      terminal = new Term(
                              checked_terms.get(i).getId(), checked_terms.get(i).getName(),checked_terms.get(i).getPid(),checked_terms.get(i).getStatus()

@@ -6,6 +6,7 @@ import android.app.Application;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
+import android.util.LruCache;
 
 import com.afa.tourism.greendao.gen.DaoMaster;
 import com.afa.tourism.greendao.gen.DaoSession;
@@ -24,6 +25,8 @@ public class My_application extends Application {
     private SQLiteDatabase db;
     private DaoMaster mDaoMaster;
     private DaoSession mDaoSession;
+    public static LruCache<String, byte[]> sbyteCache;
+
     public My_application() {
     }
     public synchronized static My_application getInstance() {
@@ -90,7 +93,18 @@ public class My_application extends Application {
 
         setDatabase();
         Net_data.instance();
-
+        initByteCache();
+    }
+/**
+ * 初始化数据缓存
+* */
+    private void initByteCache() {
+        sbyteCache = new LruCache<String, byte[]>(1*1024*1024){
+            @Override
+            protected int sizeOf(String key, byte[] value) {
+                return value.length;
+            }
+        };
     }
 
     private void setDatabase() {

@@ -1,17 +1,23 @@
 package com.example.administrator.android_sta_vod.ui.activity;
 
+import android.app.KeyguardManager;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
 
-import com.broadcast.android.android_sta_jni.ndk_wrapper;
+import com.broadcast.android.android_sta_jni_official.ndk_wrapper;
 import com.example.administrator.android_sta_vod.R;
 import com.example.administrator.android_sta_vod.adapter.User_list_adapter;
 import com.example.administrator.android_sta_vod.bean.User;
@@ -89,15 +95,47 @@ public class Call_back_activity extends Base_activity {
         grid_call_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String  user_name=  userList.get(position).getName();
-                String  user_state= userList.get(position).getStatus();
-                user_list_adapter.notifyDataSetChanged();
+
+                ShowChoise(position);
+            }
+        });
+    }
+
+    private void ShowChoise(int position) {
+        TextView title = new TextView(this);
+        title.setText(Ui_utils.get_string(R.string.please_choose_call));
+        title.setPadding(10, 10, 10, 10);
+        title.setGravity(Gravity.CENTER);
+        title.setTextSize(23);
+        title.setTextColor(Ui_utils.get_color(R.color.black));
+        AlertDialog.Builder builder = new AlertDialog.Builder(Call_back_activity.this);
+
+        builder.setCustomTitle(title);
+        //    指定下拉列表的显示数据
+        final String[] cities = {Ui_utils.get_string(R.string.online_calling), Ui_utils.get_string(R.string.online_calling_phone)};
+        //    设置一个下拉的列表选择项
+        builder.setItems(cities, new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                if(cities[which]==Ui_utils.get_string(R.string.online_calling)){
+                    String  user_name=  userList.get(position).getName();
+                    String  user_state= userList.get(position).getStatus();
+                    user_list_adapter.notifyDataSetChanged();
                 if(ON_LINE.equals(user_state)){
                     show_calldialog(user_name,user_state);
                     ndk_wrapper.instance().avsz_usr_call_req(user_name);
                 }
+                }else {
+                    //获取电话号码,跳转到打电话界面
+                    Intent dialIntent =  new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "13922271439"));//直接拨打电话
+                    startActivity(dialIntent);
+
+                }
             }
         });
+        builder.show();
     }
 
     @Override
@@ -154,12 +192,24 @@ public class Call_back_activity extends Base_activity {
         String key = info.get_key();
         String value = info.get_value();
         Log.d(tag, "type" + type + "key" + key + "value" + value);
+        //判断是否是锁屏状态
+        KeyguardManager km =
+                (KeyguardManager) this.getSystemService(Context.KEYGUARD_SERVICE);
+        boolean showingLocked = km.inKeyguardRestrictedInputMode();
         if ("usr_call_req".equals(type)) {
-            if(null == dialog_text_answer){
-                show_ansdialog(type, key, value);
-                if (null != player) {
-                    if (!player.isPlaying()) {
-                        player.start();
+
+            if(showingLocked){
+               Intent intent=new Intent(this,Answer_user_activity.class);
+                intent.putExtra("key", key);
+
+                startActivity(intent);
+            }else {
+                if(null == dialog_text_answer){
+                    show_ansdialog(type, key, value);
+                    if (null != player) {
+                        if (!player.isPlaying()) {
+                            player.start();
+                        }
                     }
                 }
             }

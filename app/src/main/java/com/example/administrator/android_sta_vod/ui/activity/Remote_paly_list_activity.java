@@ -23,7 +23,7 @@ import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.broadcast.android.android_sta_jni.ndk_wrapper;
+import com.broadcast.android.android_sta_jni_official.ndk_wrapper;
 import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.example.administrator.android_sta_vod.R;
 import com.example.administrator.android_sta_vod.bean.Mp3;

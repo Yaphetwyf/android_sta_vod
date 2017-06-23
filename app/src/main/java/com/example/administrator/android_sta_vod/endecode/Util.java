@@ -45,7 +45,45 @@ public class Util {
         }
         return yuv;
     }
+    /**
+     * 视频逆时针旋转90
+     * */
+    public static  void YUV420spRotateNegative90(byte[] dst, byte[] src, int srcWidth,
+                                         int height) {
+        int nWidth = 0, nHeight = 0;
+        int wh = 0;
+        int uvHeight = 0;
 
+        if (srcWidth != nWidth || height != nHeight) {
+            nWidth = srcWidth;
+            nHeight = height;
+            wh = srcWidth * height;
+            uvHeight = height / 2;
+        }
+
+        // 旋转Y
+        int k = 0;
+        for (int i = 0; i < srcWidth; i++) {
+            int nPos = srcWidth - 1;
+            for (int j = 0; j < height; j++) {
+                dst[k] = src[nPos - i];
+                k++;
+                nPos += srcWidth;
+            }
+        }
+
+        for (int i = 0; i < srcWidth; i += 2) {
+            int nPos = wh + srcWidth - 1;
+            for (int j = 0; j < uvHeight; j++) {
+                dst[k] = src[nPos - i - 1];
+                dst[k + 1] = src[nPos - i];
+                k += 2;
+                nPos += srcWidth;
+            }
+        }
+
+        return;
+    }
     /**
      * 保存数据到本地
      *

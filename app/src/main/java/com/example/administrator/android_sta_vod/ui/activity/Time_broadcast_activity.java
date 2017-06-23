@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.broadcast.android.android_sta_jni.ndk_wrapper;
+import com.broadcast.android.android_sta_jni_official.ndk_wrapper;
 import com.example.administrator.android_sta_vod.R;
 import com.example.administrator.android_sta_vod.adapter.Time_broadcast_adapter;
 import com.example.administrator.android_sta_vod.bean.Task;
@@ -71,7 +71,10 @@ public class Time_broadcast_activity extends Base_activity {
                 String status = tasks1.get(item_id).getStatus();
                 if ("2".equals(status)) {
                     T.show_short(Ui_utils.get_string(R.string.task_started));
-                }else {
+                }else if("0".equals(status)){
+                    T.show_short(Ui_utils.get_string(R.string.task_failed));
+                }
+                 else {
                     String id = tasks1.get(item_id).getId();
                     ndk_wrapper.instance().avsz_task_start(Integer.valueOf(id));
                 }
@@ -123,7 +126,6 @@ public class Time_broadcast_activity extends Base_activity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void eventBusOnMainThread(Tasks tasks) {
         tasks1 = tasks.getTasks();
-        Log.d("tasks1111",tasks1+"");
         broadcast_adapter = new Time_broadcast_adapter(tasks1);
         lv_broadcast_task.setAdapter(broadcast_adapter);
 

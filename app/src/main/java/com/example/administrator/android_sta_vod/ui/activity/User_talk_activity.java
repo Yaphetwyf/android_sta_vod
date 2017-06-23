@@ -3,6 +3,7 @@ package com.example.administrator.android_sta_vod.ui.activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.media.AudioFormat;
 import android.media.AudioTrack;
@@ -12,14 +13,16 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 
-import com.broadcast.android.android_sta_jni.ndk_wrapper;
+import com.broadcast.android.android_sta_jni_official.ndk_wrapper;
 import com.example.administrator.android_sta_vod.R;
 import com.example.administrator.android_sta_vod.endecode.H264Decoder;
 import com.example.administrator.android_sta_vod.endecode.Packet;
@@ -52,14 +55,12 @@ import static android.R.attr.start;
 public class User_talk_activity extends AppCompatActivity implements SurfaceHolder.Callback {
    private SurfaceView svNear;
     private SurfaceView svFar;
-
-
     public static final int FLAG_HOMEKEY_DISPATCHED = 0x80000000;//定义屏蔽参数
     private String tag = "USER_TALK_ACTIVITY";
     private Video_util video_util;
     private int decode_width = 1280;
     private int decode_height = 720;
-    private int framerate = 25, bitrate;
+    private int framerate = 25;
     private H264Decoder h264Decode;
     private AudioTrack track;
     private boolean is_talking;
@@ -88,27 +89,26 @@ public class User_talk_activity extends AppCompatActivity implements SurfaceHold
                     if (p == null) {
                         break;
                     }
-                    if (null == h264Decode && null != p && svFar != null) {
+                  /*  if (null == h264Decode && null != p && svFar != null) {
                         //开始有数据回调时初始化decode
                         try {
-                            h264Decode = new H264Decoder(svFar, "video/avc", p.width, p.height, framerate);
-
+                            h264Decode = new H264Decoder(svFar, "video/avc", p.width, p.height, 50);
+                           Log.d("test:h264",h264Decode+"");
                         } catch (Exception e) {
                             Log.e(tag, "" + e.getMessage());
                             e.printStackTrace();
                         }
-                    }
-
+                    }*/
                     do {
                         try {
-
                             Log.d("ndkndk1", "length == " + p.data.length);
                             //解码
                             if (h264Decode.onFrame(p.data, 0, p.data.length) == false) {
                                 Thread.sleep(10);
-                            } else
+                            } else{
+                                 Log.d("h264Decode.onFrame","h264Decode.onFrame");
+                            }
                                 break;
-
                         } catch (Exception e) {
                             e.printStackTrace();
                             //跳出内层循环
@@ -144,6 +144,7 @@ public class User_talk_activity extends AppCompatActivity implements SurfaceHold
                                 Log.d("aac_encordthread", "pcm_time" + ppacket.getTime() + "cur_time" + System
                                         .currentTimeMillis());
                             } catch (Exception e) {
+
                             }
                         }
                     } else {
@@ -153,7 +154,6 @@ public class User_talk_activity extends AppCompatActivity implements SurfaceHold
                     e.printStackTrace();
                 }
             }
-
         }
     });
     private String username;
@@ -161,9 +161,16 @@ public class User_talk_activity extends AppCompatActivity implements SurfaceHold
     private long curtime;
     private Button btnCancel;
     private Audioplay_service mService;
+    private String path = "/mnt/sdcard/videoutil3.h264";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+         //   setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
         setContentView(R.layout.activity_user_talk);
         Intent intent1 = new Intent(this, Audioplay_service.class);
         bindService(intent1, mServiceConnection, BIND_AUTO_CREATE);
@@ -182,10 +189,10 @@ public class User_talk_activity extends AppCompatActivity implements SurfaceHold
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         this.getWindow().setFlags(FLAG_HOMEKEY_DISPATCHED, FLAG_HOMEKEY_DISPATCHED);
+
     }
 
     ServiceConnection mServiceConnection = new ServiceConnection() {
-
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Audioplay_service.MyBinder binder = (Audioplay_service.MyBinder) service;
@@ -193,11 +200,9 @@ public class User_talk_activity extends AppCompatActivity implements SurfaceHold
             if(mService!=null){
                 if(mService.isPlaying()){
                     mService.pause();
-
                 }
             }
         }
-
         @Override
         public void onServiceDisconnected(ComponentName name) {
         }
@@ -206,31 +211,29 @@ public class User_talk_activity extends AppCompatActivity implements SurfaceHold
 
         username = getIntent().getStringExtra("user_name");
         svNear=(SurfaceView) findViewById(R.id.sv_near);
-
+        Display display = getWindowManager().getDefaultDisplay(); // 为获取屏幕宽、高
+        ViewGroup.LayoutParams layoutParams = svNear.getLayoutParams();
+        layoutParams.width= (int) (display.getWidth()*0.3);
+        layoutParams.height= (int) (display.getHeight()*0.4);
         Log.d("svNear",svNear+"===");
         if(svNear!=null){
             svNear.setZOrderOnTop(true);
             svNear.getHolder().setFormat(PixelFormat.TRANSPARENT);
         }else{
-
             svNear.setVisibility(View.GONE);
         }
-
     }
 
     private void init_video() {
         video_util = new Video_util(svNear);
        svNear.getHolder().addCallback(this);
         svFar.getHolder().addCallback(this);
-
-
-        h264dataQueue = new ArrayBlockingQueue<Packet>(10000);
-//        h264Decode = new H264Decoder(svFar, "video/avc", decode_width, decode_height, framerate);
+        h264dataQueue = new ArrayBlockingQueue<Packet>(100000);
+//        h264Decode = new H264Decioder(svFar, "video/avc", decode_width, decode_height, framerate);
 
     }
 
     private void init_audio() {
-
         pcmdata_queue = new ArrayBlockingQueue<Pcm_packet>(10000);
         if (null == audio_send_pool) {
             audio_send_pool = Executors.newCachedThreadPool();
@@ -239,7 +242,20 @@ public class User_talk_activity extends AppCompatActivity implements SurfaceHold
         open_close_talk();
 
     }
+    public void onConfigurationChanged(Configuration newConfig) {
 
+        super.onConfigurationChanged(newConfig);
+
+//切换为竖屏
+
+        if (newConfig.orientation == this.getResources().getConfiguration().ORIENTATION_PORTRAIT) {
+
+        }
+//切换为横屏
+        else if (newConfig.orientation == this.getResources().getConfiguration().ORIENTATION_LANDSCAPE) {
+
+        }
+    }
     //
     private void init_event() {
         //远方视频监听
@@ -247,6 +263,20 @@ public class User_talk_activity extends AppCompatActivity implements SurfaceHold
             @Override
             public void video_play(String sender, int sender_type, byte[] buf, int key_frm, int width, int height,
                                    int fps) {
+                Log.d("set_video_listener","set_video_listener_time");
+                Log.d("zhengshu",fps+"");
+       //         Util.save(buf, 0, buf.length, path, true);
+                if (null == h264Decode)
+                {
+                    try
+                    {
+                        h264Decode = new H264Decoder(svFar, "video/avc", width, height, 50);
+                    } catch (Exception e)
+                    {
+
+                    }
+
+                }
                 if (null != svFar) {
                     if (h264playing) {
                         Packet p = new Packet(buf, key_frm, width, height);
@@ -262,9 +292,9 @@ public class User_talk_activity extends AppCompatActivity implements SurfaceHold
 
         //远方音频监听
         ndk_wrapper.instance().set_audio_listener(new ndk_wrapper.Audio_listener() {
-
             @Override
             public void audio_play(String sender, int sender_type, byte[] buf, int channel, int bitrate, int sample) {
+                Log.d("set_audio_listener","set_audio_listener_time");
                 last_time = System.currentTimeMillis();
                 if (null == track) {
                     track = Audio_track_util.create_audio_track(channel, bitrate, sample);
@@ -275,14 +305,12 @@ public class User_talk_activity extends AppCompatActivity implements SurfaceHold
                             Pcm_packet pcmpacket = new Pcm_packet(buf, System.currentTimeMillis());
                             pcmdata_queue.put(pcmpacket);
                         }
-
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         });
-
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

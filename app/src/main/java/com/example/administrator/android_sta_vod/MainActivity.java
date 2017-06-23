@@ -1,5 +1,7 @@
 package com.example.administrator.android_sta_vod;
 
+import android.app.KeyguardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
@@ -12,13 +14,15 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.broadcast.android.android_sta_jni.ndk_wrapper;
+import com.broadcast.android.android_sta_jni_official.ndk_wrapper;
 import com.example.administrator.android_sta_vod.app.My_application;
 import com.example.administrator.android_sta_vod.base.Const;
 import com.example.administrator.android_sta_vod.bean.User;
 import com.example.administrator.android_sta_vod.bean.Users;
 import com.example.administrator.android_sta_vod.event.Avsz_info_event;
 import com.example.administrator.android_sta_vod.ui.activity.About_us_activity;
+import com.example.administrator.android_sta_vod.ui.activity.Answer_term_activity;
+import com.example.administrator.android_sta_vod.ui.activity.Answer_user_activity;
 import com.example.administrator.android_sta_vod.ui.activity.Audio_activity;
 import com.example.administrator.android_sta_vod.ui.activity.Base_activity;
 import com.example.administrator.android_sta_vod.ui.activity.Call_back_activity;
@@ -204,12 +208,22 @@ public class MainActivity extends Base_activity {
         String key = info.get_key();
         String value = info.get_value();
         Log.d(tag, "type" + type + "key" + key + "value" + value);
+        KeyguardManager km =
+                (KeyguardManager) this.getSystemService(Context.KEYGUARD_SERVICE);
+        boolean showingLocked = km.inKeyguardRestrictedInputMode();
         if ("usr_call_req".equals(type)) {
-            if(null == dialog_text_answer){
-                show_ansdialog(type, key, value);
-                if (null != player) {
-                    if (!player.isPlaying()) {
-                        player.start();
+
+            if(showingLocked){
+                Intent intent=new Intent(this,Answer_user_activity.class);
+                intent.putExtra("key", key);
+                startActivity(intent);
+            }else {
+                if(null == dialog_text_answer){
+                    show_ansdialog(type, key, value);
+                    if (null != player) {
+                        if (!player.isPlaying()) {
+                            player.start();
+                        }
                     }
                 }
             }
@@ -262,12 +276,21 @@ public class MainActivity extends Base_activity {
             }
         }
         if("term_call_req".equals(type)){
-            if (null != player) {
-                if (!player.isPlaying()) {
-                    player.start();
+            if(showingLocked){
+                Intent intent=new Intent(this,Answer_term_activity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("term_id", key);
+                bundle.putString("term_name", value);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }else {
+                if (null != player) {
+                    if (!player.isPlaying()) {
+                        player.start();
+                    }
                 }
+                show_trem_ansdialog(type, key, value);
             }
-            show_trem_ansdialog(type, key, value);
         }
         if("term_call_req_cancel".equals(type)){
             if (null != player) {

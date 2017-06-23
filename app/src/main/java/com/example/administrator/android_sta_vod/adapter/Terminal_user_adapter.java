@@ -67,7 +67,6 @@ public class Terminal_user_adapter extends BaseAdapter {
         }
         return convertView;
     }
-
     class ViewHolder
     {
         public TextView name;

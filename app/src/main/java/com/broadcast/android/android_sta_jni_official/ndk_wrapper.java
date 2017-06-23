@@ -1,4 +1,4 @@
-package com.broadcast.android.android_sta_jni;
+package com.broadcast.android.android_sta_jni_official;
 
 import android.util.Log;
 
@@ -51,8 +51,6 @@ public class ndk_wrapper {
         if(null != video_listener){
             video_listener.video_play(sender,sender_type,buf,key_frm,width,height,fps);
         }
-
-
     }
 
     public void user_stop(){
@@ -92,7 +90,7 @@ public class ndk_wrapper {
     //id 文件接收任务ID, avsz_file_transfer请求下载文件后，会生成下载任务ID
     //文件大小
     //full_path 请求下载的文件全路径[服务端PC上]，同avsz_file_transfer的参数
-    //buf 文件数据，及长度
+    //buf 文件数据,及长度
     //key 消息类型 如下：
     // file_recv_start[文件传输开始]    file_recv_data[文件数据]     file_recv_end[文件传输线束]
     // no_file[文件不存在]     open_failed[文件打开失败]     empty_file[空文件]
@@ -106,19 +104,17 @@ public class ndk_wrapper {
     public void set_cb_file_listener(Cb_file_listener cb_file_listener){
     this.cb_file_listener=cb_file_listener;
 }
+
     public interface Cb_file_listener{
+
     void cb_file_listener(int id, long file_size, String full_path,  String key,  byte[] buf);
 }
     //*************************************************************************
     public void avsz_callback(String type, String key, byte[] buf) {
-
-
-
         cachedThreadPool.execute(new Runnable() {
             @Override
             public void run()
             {
-
                 if (!"xml".equals(key))
                 {
                     EventBus.getDefault().post(new Avsz_info_event(type, key, new String(buf)));
@@ -132,7 +128,7 @@ public class ndk_wrapper {
                 }
                 if (new String(buf).contains("invalid_pwd"))
                 {
-                    EventBus.getDefault().post(new Avsz_info_event(type, key, new String(buf)));
+                     EventBus.getDefault().post(new Avsz_info_event(type, key, new String(buf)));
                 }
                 if ("login_ret_usr_list".equals(type))
                 {
@@ -141,7 +137,6 @@ public class ndk_wrapper {
                     EventBus.getDefault().post(root);
                     String text = XmlUtils.toXml(root);
                     Log.d("texttext", text);
-
                     if(null != root.getAreas()){
                         EventBus.getDefault().post(root.getAreas());
                     }
@@ -163,6 +158,20 @@ public class ndk_wrapper {
         });
         Log.d("#####", "type:" + type + " key:" + key + " value:" + new String(buf));
     }
+    /*public int uti_db_open(){
+       //打开数据库
+           return 1;
+    };
+    public void uti_db_close(){
+    //关闭数据库
+    };
+    public int uti_db_exec(String sql){
+    //执行数据库操作(增删改)
+    };
+    public String uti_db_query(String sql){
+    //查询数据库
+    return xml数据;
+    };*/
 
 
     public native int avsz_init(String ip, short port, String usr_name, String usr_pwd);
