@@ -12,6 +12,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -124,9 +125,10 @@ public class Remote_paly_list_activity extends Base_activity {
 
                             mp3s.get(music_index).setProgress((int) (progress*100.0/MAX_SIZE));
                             try {
-                                Thread.sleep(5);
+                              //  Thread.sleep(5);
+                                SystemClock.sleep(7);
                                 play_list_adapter.notifyDataSetChanged();
-                            } catch (InterruptedException e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
 
@@ -144,7 +146,6 @@ public class Remote_paly_list_activity extends Base_activity {
                 }
                 if(key.equals("file_recv_end")){
                  mp3s.get(music_index).setDownload(true);
-
                     music_index++;
                     downLoad_music();
 

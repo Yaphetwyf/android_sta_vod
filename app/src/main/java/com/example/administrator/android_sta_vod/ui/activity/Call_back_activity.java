@@ -129,7 +129,7 @@ public class Call_back_activity extends Base_activity {
                 }
                 }else {
                     //获取电话号码,跳转到打电话界面
-                    Intent dialIntent =  new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "13922271439"));//直接拨打电话
+                    Intent dialIntent =  new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "10086"));//直接拨打电话
                     startActivity(dialIntent);
 
                 }
@@ -201,7 +201,6 @@ public class Call_back_activity extends Base_activity {
             if(showingLocked){
                Intent intent=new Intent(this,Answer_user_activity.class);
                 intent.putExtra("key", key);
-
                 startActivity(intent);
             }else {
                 if(null == dialog_text_answer){
@@ -234,14 +233,18 @@ public class Call_back_activity extends Base_activity {
                 }
             }
         }
-        if ("usr_online".equals(type)) {
-            tv_title.setText(R.string.on_line);
+        if ("tcp".equals(type))
+        {
+            if ("close_conn_i".equals(key)||"close".equals(key) || "timeout".equals(key) || "finished".equals(key)) {
+                tv_title.setText(Ui_utils.get_string(R.string.off_line));
+            }
         }
-        if ("close".equals(key) || "timeout".equals(key) || "finished".equals(key)) {
-            tv_title.setText(R.string.off_line);
+        if("usr_status".equals(type)&&"1".equals(value)){
+            tv_title.setText(Ui_utils.get_string(R.string.on_line));
         }
+
         if (null != userList) {
-            if ("usr_offline".equals(type)) {
+           /* if ("usr_offline".equals(type)) {
                 for (int i = 0; i < userList.size(); i++) {
                     if (key.equals(userList.get(i).getName())) {
                         userList.get(i).setStatus("0");
@@ -255,6 +258,15 @@ public class Call_back_activity extends Base_activity {
                 for (int i = 0; i < userList.size(); i++) {
                     if (key.equals(userList.get(i).getName())) {
                         userList.get(i).setStatus("1");
+                        Log.d(tag, "usr_online" + userList.get(i).getName());
+                        user_list_adapter.notifyDataSetChanged();
+                    }
+                }
+            }*/
+            if("usr_status".equals(type)){
+                for (int i = 0; i < userList.size(); i++) {
+                    if (key.equals(userList.get(i).getName())) {
+                        userList.get(i).setStatus(value);
                         Log.d(tag, "usr_online" + userList.get(i).getName());
                         user_list_adapter.notifyDataSetChanged();
                     }

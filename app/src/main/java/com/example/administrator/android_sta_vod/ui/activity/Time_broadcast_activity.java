@@ -69,10 +69,9 @@ public class Time_broadcast_activity extends Base_activity {
                     return;
                 }
                 String status = tasks1.get(item_id).getStatus();
+                Log.d("term_state","term_state:"+status);
                 if ("2".equals(status)) {
                     T.show_short(Ui_utils.get_string(R.string.task_started));
-                }else if("0".equals(status)){
-                    T.show_short(Ui_utils.get_string(R.string.task_failed));
                 }
                  else {
                     String id = tasks1.get(item_id).getId();
@@ -121,7 +120,6 @@ public class Time_broadcast_activity extends Base_activity {
                 }
             }
         }
-
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void eventBusOnMainThread(Tasks tasks) {

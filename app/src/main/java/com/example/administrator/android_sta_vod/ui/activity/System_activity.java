@@ -146,22 +146,25 @@ public String state="";
             T.show_short(Ui_utils.get_string(R.string.server_connect_failure));
         }
 
-            if ("usr_online".equals(type)) {
-                Log.d("login", "login_after");
-                title.setText(R.string.on_line);
+        if ("tcp".equals(type))
+        {
+            if ("close_conn_i".equals(key)||"close".equals(key) || "timeout".equals(key) || "finished".equals(key)) {
+                title.setText(Ui_utils.get_string(R.string.off_line));
+            }
         }
-
-            if ("close".equals(key) || "timeout".equals(key) || "finished".equals(key)) {
-                title.setText(R.string.off_line);
+       /* if ("login_ret_usr_list".equals(type) && value.contains("ok"))
+        {
+            title.setText(Ui_utils.get_string(R.string.on_line));
+        }*/
+        if("usr_status".equals(type)&&"1".equals(value)){
+            title.setText(Ui_utils.get_string(R.string.on_line));
         }
-
 //        if("tcp".equals(type) && "finished".equals(key)){
 //            T.show_short(Ui_utils.get_string(R.string.lost_connection));
 //            Beacon_util.login();
 //        }
 
         if ("xml".equals(key)) {
-
         }
 
     }

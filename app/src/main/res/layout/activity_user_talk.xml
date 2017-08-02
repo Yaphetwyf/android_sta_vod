@@ -34,14 +34,23 @@
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/btn_user_talk_cancel"
-                android:layout_width="match_parent"
+                android:layout_width="1dp"
+                android:layout_weight="3"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:text="@string/hang_up"
+                android:textColor="@color/black"/>
+            <Button
+                android:id="@+id/btn_switch_camera"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:text="@string/switch_camera"
                 android:textColor="@color/black"/>
         </LinearLayout>
     </LinearLayout>

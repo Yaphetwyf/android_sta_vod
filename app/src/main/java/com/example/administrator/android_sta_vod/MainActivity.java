@@ -270,7 +270,6 @@ public class MainActivity extends Base_activity {
                 for (int i = 0; i < users.getUsers().size(); i++) {
                     if (key.equals(users.getUsers().get(i).getName())) {
                         users.getUsers().get(i).setStatus("1");
-
                     }
                 }
             }

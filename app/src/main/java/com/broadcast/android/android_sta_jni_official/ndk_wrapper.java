@@ -133,6 +133,7 @@ public class ndk_wrapper {
                 if ("login_ret_usr_list".equals(type))
                 {
                     Root root = XmlUtils.toBean(Root.class, buf);
+
                     Log.d(tag, "root == " + root.toString());
                     EventBus.getDefault().post(root);
                     String text = XmlUtils.toXml(root);
@@ -162,12 +163,15 @@ public class ndk_wrapper {
        //打开数据库
            return 1;
     };
+
     public void uti_db_close(){
     //关闭数据库
     };
+
     public int uti_db_exec(String sql){
     //执行数据库操作(增删改)
     };
+
     public String uti_db_query(String sql){
     //查询数据库
     return xml数据;
@@ -207,7 +211,6 @@ public class ndk_wrapper {
     public native int avsz_usr_av_talk_stop(String usr_name);
 
     public native int avsz_async_vid(byte[] h264, int key_frm, int width, int height, int fps);
-
     //数据,通道,比特,采样率
     public native int assz_async_aud(byte[] pcm, int channel, int bitrate, int sample);
 

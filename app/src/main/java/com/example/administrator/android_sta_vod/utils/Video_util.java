@@ -1,5 +1,6 @@
 package com.example.administrator.android_sta_vod.utils;
 
+import android.app.Activity;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.media.MediaCodec;
@@ -35,9 +36,10 @@ public class Video_util {
     private int width = 640;
     private int height = 480;
     private int bitrate;
-    private String path = "/mnt/sdcard/videoutil.mp4";
+    private String path = "/mnt/sdcard/videoutil33.h264";
     private NV21Convertor mConvertor;
-    private MediaCodec mMediaCodec;
+    private static MediaCodec mMediaCodec;
+    private int cameraPosition=1;//1代表前置摄像头,0代表后置摄像头;
     private int mCameraId = Camera.CameraInfo.CAMERA_FACING_BACK;//Camera.CameraInfo.CAMERA_FACING_BACK;
     private Camera mCamera;
     private boolean started = false;
@@ -48,10 +50,13 @@ public class Video_util {
     public static long video_capture_time = System.currentTimeMillis();
     private ByteBuffer outputBuffer;
     byte[] mPpsSps=new byte[0];
-    public Video_util(SurfaceView surfaceView) {
+    private Activity activity;
+    private boolean flag=true;
+    public Video_util(SurfaceView surfaceView, Activity activity) {
         this.svTalkback = surfaceView;
         this.h264dataQueue = new ArrayBlockingQueue<Packet>(10000);
-
+        this.activity=activity;
+        get_camera_info();
     }
 
     public void initMediaCodec() {
@@ -84,7 +89,7 @@ public class Video_util {
     }
 
     private int getDgree() {
-        int rotation = 0;
+        int rotation =activity.getWindowManager().getDefaultDisplay().getRotation();
         int degrees = 0;
         switch (rotation) {
             case Surface.ROTATION_0:
@@ -100,8 +105,9 @@ public class Video_util {
                 degrees = 270;
                 break;// Landscape right
         }
-        //return degrees;
-        return 90;
+        Log.d("degress",degrees+"");
+        return degrees;
+     //   return 90;
     }
 
     public static int[] determineMaximumSupportedFramerate(Camera.Parameters parameters) {
@@ -115,15 +121,120 @@ public class Video_util {
         }
         return maxFps;
     }
+    public void get_camera_info(){
+        Camera.CameraInfo info = new Camera.CameraInfo();
+        int cameraCount = Camera.getNumberOfCameras();
+       if(cameraCount==1){
+       //    Camera.getCameraInfo(1, info);//得到每一个摄像头的信息
+           if(info.facing  == Camera.CameraInfo.CAMERA_FACING_BACK){
+               mCameraId=Camera.CameraInfo.CAMERA_FACING_BACK;
+               mCamera = Camera.open(mCameraId);
+           }else {
+               mCameraId=Camera.CameraInfo.CAMERA_FACING_FRONT;
+               mCamera = Camera.open(mCameraId);
+           }
+       }else {
+           mCameraId=Camera.CameraInfo.CAMERA_FACING_BACK;
+           mCamera = Camera.open(mCameraId);
+       }
+
+    }
+    public int get_camera_swap(){
+        Camera.CameraInfo info = new Camera.CameraInfo();
+        int cameraCount = Camera.getNumberOfCameras();
+        if(cameraCount==1){
+            //    Camera.getCameraInfo(1, info);//得到每一个摄像头的信息
+            if(info.facing  == Camera.CameraInfo.CAMERA_FACING_BACK){
+                mCameraId=Camera.CameraInfo.CAMERA_FACING_BACK;
+                return mCameraId;
+            }else {
+                mCameraId=Camera.CameraInfo.CAMERA_FACING_FRONT;
+                return mCameraId;
+            }
+        }else {
+            if(info.facing  == Camera.CameraInfo.CAMERA_FACING_BACK){
+                mCameraId=Camera.CameraInfo.CAMERA_FACING_BACK;
+                return mCameraId;
+            }else {
+                mCameraId=Camera.CameraInfo.CAMERA_FACING_FRONT;
+                return mCameraId;
+            }
+        }
+    }
+
+
+    /**
+    获取摄像机的个数
+    */
+    public boolean get_camera_number(){
+        int numberOfCameras = Camera.getNumberOfCameras();
+        if(numberOfCameras==1){
+            return false;
+        }else {
+            return true;
+        }
+    }
+    //切换前后摄像头
+   public void switch_camera(SurfaceHolder surfaceHolder){
+       int cameraCount = 0;
+       Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+       cameraCount = Camera.getNumberOfCameras();//得到摄像头的个数
+       for(int i = 0; i < cameraCount; i++  ) {
+           Camera.getCameraInfo(i, cameraInfo);//得到每一个摄像头的信息
+           if(cameraPosition == 1) {
+               //现在是后置，变更为前置
+               if(cameraInfo.facing  == Camera.CameraInfo.CAMERA_FACING_BACK) {//代表摄像头的方位，CAMERA_FACING_FRONT前置      CAMERA_FACING_BACK后置
+                   mCameraId=Camera.CameraInfo.CAMERA_FACING_FRONT;
+                   mCamera.stopPreview();//停掉原来摄像头的预览
+                   mCamera.release();//释放资源
+                   mCamera = null;//取消原来摄像头
+                   mCamera = Camera.open(mCameraId);
+                  ctreateCamera(surfaceHolder);
+                   mCamera.startPreview();//开始预览
+                   int previewFormat = mCamera.getParameters().getPreviewFormat();
+                   Camera.Size previewSize = mCamera.getParameters().getPreviewSize();
+                   int size = previewSize.width * previewSize.height
+                           * ImageFormat.getBitsPerPixel(previewFormat)
+                           / 8;
+                   mCamera.addCallbackBuffer(new byte[size]);
+                   mCamera.setPreviewCallbackWithBuffer(previewCallback);
+                   cameraPosition = 0;
+                   flag=false;
+                   break;
+               }
+           } else {
+               //现在是前置， 变更为后置
+               if(cameraInfo.facing  == Camera.CameraInfo.CAMERA_FACING_FRONT) {//代表摄像头的方位，CAMERA_FACING_FRONT前置      CAMERA_FACING_BACK后置
+                   mCameraId=Camera.CameraInfo.CAMERA_FACING_BACK;
+                   mCamera.stopPreview();//停掉原来摄像头的预览
+                   mCamera.release();//释放资源
+                   mCamera = null;//取消原来摄像头
+                   mCamera = Camera.open(mCameraId);
+                   ctreateCamera(surfaceHolder);
+                   mCamera.startPreview();//开始预览
+                   int previewFormat = mCamera.getParameters().getPreviewFormat();
+                   Camera.Size previewSize = mCamera.getParameters().getPreviewSize();
+                   int size = previewSize.width * previewSize.height
+                           * ImageFormat.getBitsPerPixel(previewFormat)
+                           / 8;
+                   mCamera.addCallbackBuffer(new byte[size]);
+                   mCamera.setPreviewCallbackWithBuffer(previewCallback);
+                   cameraPosition = 1;
+                   flag=true;
+                   break;
+               }
+           }
+       }
+   }
 
     //init camera
     public boolean ctreateCamera(SurfaceHolder surfaceHolder) {
         try {
-            mCamera = Camera.open(mCameraId);
+
             Camera.Parameters parameters = mCamera.getParameters();
             int[] max = determineMaximumSupportedFramerate(parameters);
             Camera.CameraInfo camInfo = new Camera.CameraInfo();
-            Camera.getCameraInfo(mCameraId, camInfo);
+
             int cameraRotationOffset = camInfo.orientation;
 //            int rotate = (360 + cameraRotationOffset - getDgree()) % 360;
              int rotate = (360 + cameraRotationOffset - 180) % 360;
@@ -134,9 +245,11 @@ public class Video_util {
             parameters.setPreviewFpsRange(max[0], max[1]);
             mCamera.setParameters(parameters);
             mCamera.autoFocus(null);
-            int displayRotation;
+          /*  int displayRotation;
             displayRotation = (cameraRotationOffset - getDgree() + 360) % 360;
-            mCamera.setDisplayOrientation(0);//设置预览窗口方向
+            mCamera.setDisplayOrientation(0);//设置预览窗口方向*/
+            int camera_swap = get_camera_swap();
+            setCameraDisplayOrientation(activity,camera_swap,mCamera);
             mCamera.setPreviewDisplay(surfaceHolder);
             Log.d(tag, "ctreateCamera");
             return true;
@@ -151,7 +264,30 @@ public class Video_util {
             return false;
         }
     }
+    public static void setCameraDisplayOrientation(Activity activity,
+                                                            int cameraId, android.hardware.Camera camera) {
+             android.hardware.Camera.CameraInfo info =
+                     new android.hardware.Camera.CameraInfo();
+             android.hardware.Camera.getCameraInfo(cameraId, info);
+            int rotation = activity.getWindowManager().getDefaultDisplay()
+                            .getRotation();
+        int degrees = 0;
+             switch (rotation) {
+                     case Surface.ROTATION_0: degrees = 0; break;
+                     case Surface.ROTATION_90: degrees = 90; break;
+                     case Surface.ROTATION_180: degrees = 180; break;
+                     case Surface.ROTATION_270: degrees = 270; break;
+                 }
 
+             int result;
+             if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                     result = (info.orientation + degrees) % 360;
+                     result = (360 - result) % 360;  // compensate the mirror
+                 } else {  // back-facing
+                     result = (info.orientation - degrees + 360) % 360;
+                 }
+             camera.setDisplayOrientation(result);
+         }
     /**
      * 销毁Camera
      */
@@ -191,7 +327,6 @@ public class Video_util {
 
         }
     }
-
     /**
      * 停止预览
      */
@@ -199,6 +334,8 @@ public class Video_util {
         if (mCamera != null) {
             mCamera.stopPreview();
             mCamera.setPreviewCallbackWithBuffer(null);
+            mCamera.release();
+            mCamera=null;
             started = false;
             h264playing = false;
             user_send_video_thread.interrupt();
@@ -216,7 +353,6 @@ public class Video_util {
 
     Camera.PreviewCallback previewCallback =  new Camera.PreviewCallback() {
 
-
         @Override
         public void onPreviewFrame(byte[] data, Camera camera) {
             if (data == null) {
@@ -226,10 +362,23 @@ public class Video_util {
             ByteBuffer[] outputBuffers = mMediaCodec.getOutputBuffers();
             byte[] dst = new byte[data.length];
             Camera.Size previewSize = mCamera.getParameters().getPreviewSize();
+            int camera_swap = get_camera_swap();
             if (getDgree() == 0) {
-                dst = Util.rotateNV21Degree90(data, previewSize.width, previewSize.height);
+
+                Log.d("camera_swap",camera_swap+"");
+                //Camera.CameraInfo info = CameraHolder.instance().getCameraInfo()[mCameraId];
+                if(flag){
+                    dst = Util.rotateNV21Degree90(data, previewSize.width, previewSize.height);
+                }else {
+                 //   dst =data;
+                    Util.YUV420spRotateNegative90(dst,data, previewSize.width, previewSize.height);
+                }
+            }else if(getDgree()==90){
+                dst =data;
+            }else if(getDgree()==180){
+                dst =data;
             } else {
-                dst = data;
+                dst =data;
             }
 
             try {
@@ -256,7 +405,7 @@ public class Video_util {
                         if ((outData[0] == 0 && outData[1] == 0 && outData[2] == 1 && x == 7) || (outData[0] == 0 &&
                                 outData[1] == 0 && outData[2] == 0 && outData[3] == 1 && y == 7)){
                             mPpsSps = outData;
-//                            Packet packet = new Packet(outData, 0, width, height);
+
                         } else if ((outData[0] == 0 && outData[1] == 0 && outData[2] == 1 && x == 5) || (outData[0]
                                 == 0 && outData[1] == 0 && outData[2] == 0 && outData[3] == 1 && y == 5)) {
                             //在关键帧前面加上pps和sps数据
@@ -277,7 +426,9 @@ public class Video_util {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
+
                         mMediaCodec.releaseOutputBuffer(outputBufferIndex, false);
+                        outputBufferIndex = mMediaCodec.dequeueOutputBuffer(bufferInfo, 0);
                       //  outputBuffer.clear();
                     }
                 } else {
@@ -297,27 +448,7 @@ public class Video_util {
 
     };
 
-    private void makePpsSps(byte[] outData) {
-        outputBuffer.get(outData);
-        //记录pps和sps
-        if ((outData[0] == 0 && outData[1] == 0 && outData[2] == 1 &&
-                (outData[3] & 0x1f) == 7) || (outData[0] == 0 && outData[1] == 0 &&
-                outData[2] == 0 && outData[3] == 1 && (outData[4] & 0x1f) == 7)) {
-            mPpsSps = outData;
-        } else if ((outData[0] == 0 && outData[1] == 0 && outData[2] == 1 && (outData[3] &
-                0x1f) == 5) || (outData[0] == 0 && outData[1] == 0 && outData[2] == 0 &&
-                outData[3] == 1 && (outData[4] & 0x1f) == 5)) {
-            //在关键帧前面加上pps和sps数据
-            String uniqueTimeStrLock ="fenghuo";
-            My_application.sbyteCache.put(uniqueTimeStrLock, new byte[mPpsSps
-                    .length + outData.length]);
-            System.arraycopy(mPpsSps, 0,  My_application.sbyteCache.get
-                    (uniqueTimeStrLock), 0, mPpsSps.length);
-            System.arraycopy(outData, 0,  My_application.sbyteCache.get
-                    (uniqueTimeStrLock), mPpsSps.length, outData.length);
-            outData=My_application.sbyteCache.get(uniqueTimeStrLock);
-        }
-    }
+
     private H264Decoder h264Decode;
 
     public Thread user_send_video_thread = new Thread(new Runnable() {
@@ -332,14 +463,16 @@ public class Video_util {
                     }
                     //发送数据
                     ndk_wrapper.instance().avsz_async_vid(p.data, p.timestamp, p.width, p.height, framerate);
-                    Log.d(tag,"send_data");
+                    Log.d(tag,"send_data "+p.data.length);
+                //    Util.save(p.data,0,p.data.length,path,true);
                     video_capture_time = System.currentTimeMillis();
+                    Log.d("video_capture_time",video_capture_time+"");
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
             }
         }
     });
+
 
 }

@@ -35,11 +35,10 @@ public abstract class BaseFragment extends Fragment implements IUIOperation {
 
         // 避免Fragment界面切换时，重复多次inflate布局和初始化数据
         if (mRoot == null) {
-            mRoot = Global.inflate(get_layout_res(), container);
 
+            mRoot = Global.inflate(get_layout_res(), container);
             // 查找布局中所有的按钮(Button或ImageButton)并设置点击事件
             Utils.findButtonsAndSetOnClickListener(mRoot, this);
-
             init_view();
             init_listener();
             init_data();
